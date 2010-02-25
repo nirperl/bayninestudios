@@ -67,7 +67,7 @@ public class PhysicsWorld
      */
     public void addBall(float x, float y)
     {
-    	if (count < (MAXBALLS+1))
+    	if (count < (MAXBALLS-1))
     	{
 	        // Create Dynamic Body
 	        BodyDef bodyDef = new BodyDef();
@@ -82,7 +82,7 @@ public class PhysicsWorld
 	        // Assign shape to Body
 	        bodies[count].createShape(circle);
 	        bodies[count].setMassFromShapes();
-//	        bodies[count].setLinearVelocity(new Vec2(0f,20f));
+	        bodies[count].setLinearVelocity(new Vec2(0f,20f));
 
 	        // Increase Counter
 	        count++;
