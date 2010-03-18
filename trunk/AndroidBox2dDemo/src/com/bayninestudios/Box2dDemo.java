@@ -56,6 +56,11 @@ class ClearGLSurfaceView extends GLSurfaceView {
             {
             	mRenderer.addBall(event.getX(), event.getY());
             }});
+	    	try {
+				Thread.sleep(40);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
             return true;
         }
 
