@@ -43,7 +43,7 @@ public class PhysicsWorld
         BodyDef groundBodyDef;
         PolygonDef groundShapeDef;
         groundBodyDef = new BodyDef();
-        groundBodyDef.position.set(new Vec2(0.0f, -40.0f));
+        groundBodyDef.position.set(new Vec2(0.0f, -30.0f));
         Body groundBody = world.createBody(groundBodyDef);
         groundShapeDef = new PolygonDef();
         groundShapeDef.setAsBox(50f, 10f);
@@ -76,13 +76,34 @@ public class PhysicsWorld
 
 	        // Create Shape with Properties
 	        CircleDef circle = new CircleDef();
-	        circle.radius = 2.0f;
+	        circle.radius = 1.0f;
 	        circle.density = 1.0f;
 
 	        // Assign shape to Body
 	        bodies[count].createShape(circle);
 	        bodies[count].setMassFromShapes();
-	        bodies[count].setLinearVelocity(new Vec2(0f,20f));
+
+	        // Increase Counter
+	        count++;
+    	}
+    }
+
+    public void addBox(float x, float y)
+    {
+    	if (count < (MAXBALLS-1))
+    	{
+	        // Create Dynamic Body
+	        BodyDef bodyDef = new BodyDef();
+	        bodyDef.position.set(x, y);
+	        bodies[count] = world.createBody(bodyDef);        	
+
+	        PolygonDef poly = new PolygonDef();
+	        poly.setAsBox(1f, 1f);
+	        poly.density = 1.0f;
+
+	        // Assign shape to Body
+	        bodies[count].createShape(poly);
+	        bodies[count].setMassFromShapes();
 
 	        // Increase Counter
 	        count++;
