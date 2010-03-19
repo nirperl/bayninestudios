@@ -43,7 +43,7 @@ public class PhysicsWorld
         BodyDef groundBodyDef;
         PolygonDef groundShapeDef;
         groundBodyDef = new BodyDef();
-        groundBodyDef.position.set(new Vec2(0.0f, -30.0f));
+        groundBodyDef.position.set(new Vec2(0.0f, -25.0f));
         Body groundBody = world.createBody(groundBodyDef);
         groundShapeDef = new PolygonDef();
         groundShapeDef.setAsBox(50f, 10f);
@@ -55,10 +55,10 @@ public class PhysicsWorld
         BodyDef groundBodyDef2;
         CircleDef groundShapeDef2;
         groundBodyDef2 = new BodyDef();
-        groundBodyDef2.position.set(new Vec2(x/10f, (y/-10f) + 40f));
+        groundBodyDef2.position.set(new Vec2(x,y));
         Body groundBody2 = world.createBody(groundBodyDef2);
         groundShapeDef2 = new CircleDef();
-        groundShapeDef2.radius = r/10f;
+        groundShapeDef2.radius = r;
         groundBody2.createShape(groundShapeDef2);
     }
 
@@ -129,14 +129,4 @@ public class PhysicsWorld
     {
     	return world.getBodyList();
     }
-
-	public float translateScreenX(float x)
-	{
-		return x/10f;
-	}
-
-	public float translateScreenY(int sy, float y)
-	{
-		return (y/-10f)+(sy/20f);
-	}
 }

@@ -45,10 +45,14 @@ public class DrawModel
 	}
 
 	public void draw(GL10 gl, float x, float y, float z, float rot, float scale) {
+		this.draw(gl, x, y, z, rot, scale, scale);
+	}
+
+	public void draw(GL10 gl, float x, float y, float z, float rot, float scaleX, float scaleY) {
 		gl.glPushMatrix();
 		gl.glTranslatef(x, y, z);
 		gl.glRotatef(rot, 0f, 0f, 1f);
-		gl.glScalef(scale, scale, 1f);
+		gl.glScalef(scaleX, scaleY, 1f);
 		this.draw(gl);
 	    gl.glPopMatrix();
 	}

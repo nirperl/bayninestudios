@@ -3,6 +3,7 @@ package com.bayninestudios;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import org.jbox2d.collision.CircleDef;
 import org.jbox2d.collision.Shape;
 import org.jbox2d.collision.ShapeType;
 import org.jbox2d.common.Vec2;
@@ -56,11 +57,6 @@ class ClearGLSurfaceView extends GLSurfaceView {
             {
             	mRenderer.addBall(event.getX(), event.getY());
             }});
-	    	try {
-				Thread.sleep(40);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
             return true;
         }
 
@@ -72,11 +68,12 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	private PhysicsWorld mWorld;
 	private DrawModel mBox;
 	private DrawModel mCircle;
+	private boolean flipModel = false;
 
 	// TODO: shouldn't be here, should be in a config file or something
-	private float circleX = 60f;
-	private float circleY = 600f;
-	private float circleR = 50f;
+	private float circleX = 0f;
+	private float circleY = -15f;
+	private float circleR = 5f;
 
 	public ClearRenderer()
 	{
@@ -125,6 +122,13 @@ class ClearRenderer implements GLSurfaceView.Renderer
     {
     	gl.glClearColor(0, 0, .5f, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+        // TODO: blech, hard coding the drawing of the ground objects
+        gl.glColor4f(1f, .5f, .5f, 1f);  // somewhat red
+    	mCircle.draw(gl, 0f, circleY, 0f, 180f, circleR);
+    	mBox.draw(gl, 0, -25f, 0f, 0f, 50f, 10f);
+
+    	gl.glColor4f(1f, 1f, 1f, 1f);  // white
     	Vec2 vec;
         Body mBody = mWorld.getBodyList();
         do
@@ -134,14 +138,14 @@ class ClearRenderer implements GLSurfaceView.Renderer
         	{
         		Shape mShape = mBody.getShapeList();
 		    	vec = mBody.getPosition();
-		    	float rot = mBody.getAngle() * 57f;
+		    	float rot = mBody.getAngle() * 57f;  // convert radians to degrees
         		if (ShapeType.POLYGON_SHAPE == mShape.getType())
         		{
-			    	mBox.draw(gl, vec.x, vec.y, 0f, rot, 0.97f);
+			    	mBox.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
         		}
         		else if (ShapeType.CIRCLE_SHAPE == mShape.getType())
         		{
-			    	mCircle.draw(gl, vec.x, vec.y, 0f, rot, 0.97f);        			
+			    	mCircle.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
         		}
         	}
 	        mBody = mBody.getNext();
@@ -152,7 +156,12 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
     public void addBall(float x, float y)
     {
-    	mWorld.addBall(mWorld.translateScreenX(x)-24f, (y/-10f)+40f);
-    	mWorld.addBox(mWorld.translateScreenX(x)-24f, (y/-10f)+40f);
+    	if (flipModel) {
+    		mWorld.addBall((x/20f) - 12f, (y - 400)/-20f);
+    		flipModel = false;
+    	} else {
+        	mWorld.addBox((x/20f) - 12f, (y - 400)/-20f);
+        	flipModel = true;
+    	}
     }
 }
