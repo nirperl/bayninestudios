@@ -1,4 +1,4 @@
-package com.bayninestudios;
+package com.bayninestudios.box2ddemo;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
