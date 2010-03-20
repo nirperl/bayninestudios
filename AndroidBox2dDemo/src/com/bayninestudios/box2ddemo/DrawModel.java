@@ -1,4 +1,4 @@
-package com.bayninestudios;
+package com.bayninestudios.box2ddemo;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

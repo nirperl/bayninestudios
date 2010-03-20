@@ -1,4 +1,4 @@
-package com.bayninestudios;
+package com.bayninestudios.box2ddemo;
 
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.CircleDef;
