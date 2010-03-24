@@ -44,10 +44,11 @@ public class Box2dDemo extends Activity
     private GLSurfaceView mGLView;
 }
 
-class ClearGLSurfaceView extends GLSurfaceView {
+class ClearGLSurfaceView extends GLSurfaceView
+{
     public ClearGLSurfaceView(Context context) {
         super(context);
-        mRenderer = new ClearRenderer();
+        mRenderer = new ClearRenderer(context);
         setRenderer(mRenderer);
     }
 
@@ -74,9 +75,11 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	private float circleX = 0f;
 	private float circleY = -15f;
 	private float circleR = 5f;
+	private Context mContext;
 
-	public ClearRenderer()
+	public ClearRenderer(Context newContext)
 	{
+		mContext = newContext;
     	mBox = new DrawModel(new float[]{
     			  -1,-1,0,
 				  1,-1,0,
@@ -111,6 +114,18 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
 		GLU.gluOrtho2D(gl, -12f, 12f, -20f, 20f);
+//		float[] boxTex = new float[]{
+//  			  0f,1f,
+//			  1f,1f,
+//			  1f,0f,
+//			  0f,0f
+//			  };
+    	mBox.loadTexture(gl, mContext, R.drawable.box, new float[]{
+    			  0f,1f,
+    			  1f,1f,
+    			  1f,0f,
+    			  0f,0f
+    			  });
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h)
