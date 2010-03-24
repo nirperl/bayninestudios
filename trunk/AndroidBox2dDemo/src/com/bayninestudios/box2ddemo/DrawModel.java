@@ -7,11 +7,19 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.opengl.GLUtils;
+
 public class DrawModel
 {
 	private FloatBuffer mVertexBuffer;
 	private ShortBuffer mIndexBuffer;
+	private FloatBuffer mTexBuffer;
 	private int vertexCount = 0;
+	private boolean hasTexture = false;
+	private int[] mTexture = new int[1];
 
 	public DrawModel(float[] coords, short[] icoords, int vertexes)
 	{
@@ -38,10 +46,31 @@ public class DrawModel
         return ib;
     }
 
-	public void draw(GL10 gl) {
+	public void loadTexture(GL10 gl, Context mContext, int mTex, float[] coords) {
+		mTexBuffer = makeFloatBuffer(coords);
+		hasTexture = true;
+        gl.glGenTextures(1, mTexture, 0);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTexture[0]);
+		Bitmap bitmap;
+    	bitmap = BitmapFactory.decodeResource(mContext.getResources(), mTex);
+        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+        bitmap.recycle();
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR );
+		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR );
+	}
+
+	public void draw(GL10 gl)
+	{
+		if (hasTexture)
+		{
+	        gl.glEnable(GL10.GL_TEXTURE_2D);
+	        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTexture[0]);
+		    gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
+		}
 	    gl.glFrontFace(GL10.GL_CCW);
 	    gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
 	    gl.glDrawElements(GL10.GL_TRIANGLE_FAN, vertexCount, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
+		gl.glDisable(GL10.GL_TEXTURE_2D);
 	}
 
 	public void draw(GL10 gl, float x, float y, float z, float rot, float scale) {
