@@ -12,10 +12,16 @@ import org.jbox2d.dynamics.Body;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 public class Box2dDemo extends Activity
 {
@@ -24,8 +30,9 @@ public class Box2dDemo extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        mGLView = new ClearGLSurfaceView(this, (SensorManager) getSystemService(SENSOR_SERVICE));
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        mGLView = new ClearGLSurfaceView(this);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(mGLView);
     }
 
@@ -46,9 +53,9 @@ public class Box2dDemo extends Activity
 
 class ClearGLSurfaceView extends GLSurfaceView
 {
-    public ClearGLSurfaceView(Context context) {
+    public ClearGLSurfaceView(Context context, SensorManager sensorMgr) {
         super(context);
-        mRenderer = new ClearRenderer(context);
+        mRenderer = new ClearRenderer(context, sensorMgr);
         setRenderer(mRenderer);
     }
 
@@ -56,8 +63,22 @@ class ClearGLSurfaceView extends GLSurfaceView
         queueEvent(new Runnable(){
             public void run()
             {
-            	mRenderer.addBall(event.getX(), event.getY());
+            	if (event.getAction() == MotionEvent.ACTION_UP)
+            	{
+            		if (event.getY() > 700f) {
+            			mRenderer.switchModel();
+            		}
+            		else
+            		{
+            			mRenderer.addBall(event.getX(), event.getY());
+            		}
+            	}
             }});
+	    	try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
             return true;
         }
 
@@ -68,16 +89,19 @@ class ClearRenderer implements GLSurfaceView.Renderer
 {
 	private PhysicsWorld mWorld;
 	private DrawModel mBox;
+	private DrawModel mLongBox;
 	private DrawModel mCircle;
-	private boolean flipModel = false;
+	private int activeModel = 0;
 
 	// TODO: shouldn't be here, should be in a config file or something
 	private float circleX = 0f;
 	private float circleY = -15f;
 	private float circleR = 5f;
 	private Context mContext;
+	SensorListener mySensorListener;
+	SensorEventListener mSensorEventListener;
 
-	public ClearRenderer(Context newContext)
+	public ClearRenderer(Context newContext, SensorManager sensorMgr)
 	{
 		mContext = newContext;
     	mBox = new DrawModel(new float[]{
@@ -88,6 +112,14 @@ class ClearRenderer implements GLSurfaceView.Renderer
 				  },
 				  new short[]{0,1,2,3,0},
     			  5);
+    	mLongBox = new DrawModel(new float[]{
+    			-.2f,-2f,0,
+				.2f,-2f,0,
+				.2f,2f,0,
+				-.2f,2f,0
+				  },
+				  new short[]{0,1,2,3,0},
+  			  5);
     	mCircle = new DrawModel(new float[]{
     		  0,0,0,
   			  0,1,0,
@@ -103,23 +135,52 @@ class ClearRenderer implements GLSurfaceView.Renderer
   			  .866f,.5f,0,
   			  .5f,.866f,0
     		},
+    		// one vertex short of a circle to make the pac man shape
     		new short[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1},
     		13);
         mWorld = new PhysicsWorld();
         mWorld.createWorld();
         mWorld.createGround();
         mWorld.createGroundCircle(circleX, circleY, circleR);
+
+        mSensorEventListener = new SensorEventListener()
+        {	
+			@Override
+			public void onSensorChanged(SensorEvent event)
+			{
+	        	float xAxis = event.values[SensorManager.DATA_X];
+	        	float yAxis = event.values[SensorManager.DATA_Y];
+	        	mWorld.setGrav(xAxis,yAxis);
+			}
+			
+			@Override
+			public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+		};
+
+		// TODO: use SensorEventListener instead of SensorListener
+        mySensorListener = new SensorListener() {
+	    	public void onSensorChanged(int sensor, float[] values)
+	    	{
+	        	if (sensor == SensorManager.SENSOR_ACCELEROMETER)
+	        	{
+		        	float xAxis = values[SensorManager.DATA_X];
+		        	float yAxis = values[SensorManager.DATA_Y];
+		        	mWorld.setGrav(xAxis,yAxis);
+	        	}
+	    	}
+	    	public void onAccuracyChanged(int sensor, int accuracy) { }
+	    };
+		sensorMgr.registerListener(mySensorListener,
+				SensorManager.SENSOR_ACCELEROMETER,
+				SensorManager.SENSOR_DELAY_GAME);
+//		sensorMgr.registerListener(mSensorEventListener,
+//				SensorManager.SENSOR_ACCELEROMETER,
+//				SensorManager.SENSOR_DELAY_UI);
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
 		GLU.gluOrtho2D(gl, -12f, 12f, -20f, 20f);
-//		float[] boxTex = new float[]{
-//  			  0f,1f,
-//			  1f,1f,
-//			  1f,0f,
-//			  0f,0f
-//			  };
     	mBox.loadTexture(gl, mContext, R.drawable.box, new float[]{
     			  0f,1f,
     			  1f,1f,
@@ -133,11 +194,17 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glViewport(0, 0, w, h);
     }
 
+    private void drawControlPanel()
+    {
+    	
+    }
+
     public void onDrawFrame(GL10 gl)
     {
     	gl.glClearColor(0, 0, .5f, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
+        drawControlPanel();
         // TODO: blech, hard coding the drawing of the ground objects
         gl.glColor4f(1f, .5f, .5f, 1f);  // somewhat red
     	mCircle.draw(gl, 0f, circleY, 0f, 180f, circleR);
@@ -156,7 +223,14 @@ class ClearRenderer implements GLSurfaceView.Renderer
 		    	float rot = mBody.getAngle() * 57f;  // convert radians to degrees
         		if (ShapeType.POLYGON_SHAPE == mShape.getType())
         		{
-			    	mBox.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
+        			String userData = (String)mShape.getUserData();
+        			if (userData == null)
+//        			if (Integer.parseInt(userData) == 0)
+        			{
+        				mBox.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
+        			} else {
+        				mLongBox.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
+        			}
         		}
         		else if (ShapeType.CIRCLE_SHAPE == mShape.getType())
         		{
@@ -169,14 +243,23 @@ class ClearRenderer implements GLSurfaceView.Renderer
         mWorld.update();
     }
 
+    public void switchModel()
+    {
+    	activeModel++;
+    	if (activeModel > 2)
+    	{
+    		activeModel = 0;
+    	}
+    }
+
     public void addBall(float x, float y)
     {
-    	if (flipModel) {
+    	if (activeModel == 0) {
     		mWorld.addBall((x/20f) - 12f, (y - 400)/-20f);
-    		flipModel = false;
-    	} else {
+    	} else if (activeModel == 1) {
         	mWorld.addBox((x/20f) - 12f, (y - 400)/-20f);
-        	flipModel = true;
+    	} else if (activeModel == 2) {
+        	mWorld.addLongBox((x/20f) - 12f, (y - 400)/-20f);
     	}
     }
 }
