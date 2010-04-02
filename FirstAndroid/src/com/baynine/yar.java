@@ -24,6 +24,16 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
+// TODO: Text to screen
+// TODO: selection or 
+// TODO: input method
+// TODO: refactor game objects
+// TODO: character animation
+// TODO: palm
+// TODO: pixie
+// TODO: fullscreen
+// TODO: 
+
 public class yar extends Activity {
 
     /** Called when the activity is first created. */
