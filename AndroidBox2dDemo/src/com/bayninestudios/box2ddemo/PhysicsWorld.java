@@ -38,6 +38,11 @@ public class PhysicsWorld
         bodies = new Body[MAXBALLS];
     }
 
+    public void setGrav(float x, float y)
+    {
+    	world.setGravity(new Vec2(x,y));
+    }
+
     public void createGround()
     {
         BodyDef groundBodyDef;
@@ -104,6 +109,30 @@ public class PhysicsWorld
 	        // Assign shape to Body
 	        bodies[count].createShape(poly);
 	        bodies[count].setMassFromShapes();
+	        bodies[count].setUserData(new String("0"));
+
+	        // Increase Counter
+	        count++;
+    	}
+    }
+
+    public void addLongBox(float x, float y)
+    {
+    	if (count < (MAXBALLS-1))
+    	{
+	        // Create Dynamic Body
+	        BodyDef bodyDef = new BodyDef();
+	        bodyDef.position.set(x, y);
+	        bodies[count] = world.createBody(bodyDef);        	
+
+	        PolygonDef poly = new PolygonDef();
+	        poly.setAsBox(.2f, 2f);
+	        poly.density = 1.0f;
+
+	        // Assign shape to Body
+	        bodies[count].createShape(poly);
+	        bodies[count].setMassFromShapes();
+	        bodies[count].setUserData(new String("1"));
 
 	        // Increase Counter
 	        count++;
