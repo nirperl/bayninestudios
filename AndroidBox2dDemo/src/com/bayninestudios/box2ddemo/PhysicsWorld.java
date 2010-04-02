@@ -123,16 +123,18 @@ public class PhysicsWorld
 	        // Create Dynamic Body
 	        BodyDef bodyDef = new BodyDef();
 	        bodyDef.position.set(x, y);
-	        bodies[count] = world.createBody(bodyDef);        	
+	        bodies[count] = world.createBody(bodyDef);
 
 	        PolygonDef poly = new PolygonDef();
 	        poly.setAsBox(.2f, 2f);
 	        poly.density = 1.0f;
+	        // using a String of 1 to denote a long box, bit of a hack
+	        // in theory you should step into the shape object and grab the x and y
+	        poly.userData = new String("1");
 
 	        // Assign shape to Body
 	        bodies[count].createShape(poly);
 	        bodies[count].setMassFromShapes();
-	        bodies[count].setUserData(new String("1"));
 
 	        // Increase Counter
 	        count++;

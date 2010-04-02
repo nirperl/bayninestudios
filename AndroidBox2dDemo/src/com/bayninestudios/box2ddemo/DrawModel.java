@@ -65,7 +65,7 @@ public class DrawModel
 		{
 	        gl.glEnable(GL10.GL_TEXTURE_2D);
 	        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTexture[0]);
-		    gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
+			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
 		}
 	    gl.glFrontFace(GL10.GL_CCW);
 	    gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);

@@ -181,11 +181,17 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
 		GLU.gluOrtho2D(gl, -12f, 12f, -20f, 20f);
+//		float[] boxTex = new float[]{
+//  		  0f,1f,
+//			  1f,1f,
+//			  1f,0f,
+//			  0f,0f
+//			  };
     	mBox.loadTexture(gl, mContext, R.drawable.box, new float[]{
-    			  0f,1f,
-    			  1f,1f,
+    			  0f,0f,
     			  1f,0f,
-    			  0f,0f
+    			  1f,1f,
+    			  0f,1f
     			  });
     }
 
@@ -223,10 +229,11 @@ class ClearRenderer implements GLSurfaceView.Renderer
 		    	float rot = mBody.getAngle() * 57f;  // convert radians to degrees
         		if (ShapeType.POLYGON_SHAPE == mShape.getType())
         		{
-        			String userData = (String)mShape.getUserData();
-        			if (userData == null)
-//        			if (Integer.parseInt(userData) == 0)
-        			{
+        			Object userData = mShape.getUserData();
+        			// only checking if the userData is set, if it is, it's a long box
+        			// if not, it's a normal box.  should step into the shape and get
+        			// the x y instead
+        			if (userData == null) {
         				mBox.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
         			} else {
         				mLongBox.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
