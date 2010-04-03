@@ -1,4 +1,4 @@
-===My To Do List for the Project===
+===My To Do List for the Box2d Demo Project===
   * add a texture to long box, maybe a plank of wood
   * create more static objects to have the objects run into
   * border up the area to not let any leave
