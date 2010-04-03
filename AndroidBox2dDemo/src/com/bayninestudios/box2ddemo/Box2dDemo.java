@@ -3,7 +3,6 @@ package com.bayninestudios.box2ddemo;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import org.jbox2d.collision.CircleDef;
 import org.jbox2d.collision.Shape;
 import org.jbox2d.collision.ShapeType;
 import org.jbox2d.common.Vec2;
@@ -91,7 +90,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	private DrawModel mBox;
 	private DrawModel mLongBox;
 	private DrawModel mCircle;
-	private int activeModel = 0;
+	private int activeModel = 1;
 
 	// TODO: shouldn't be here, should be in a config file or something
 	private float circleX = 0f;
@@ -110,6 +109,12 @@ class ClearRenderer implements GLSurfaceView.Renderer
 				  1,1,0,
 				  -1,1,0
 				  },
+				  new float[]{
+	  			  0f,1f,
+				  1f,1f,
+				  1f,0f,
+				  0f,0f
+    			  },
 				  new short[]{0,1,2,3,0},
     			  5);
     	mLongBox = new DrawModel(new float[]{
@@ -133,11 +138,28 @@ class ClearRenderer implements GLSurfaceView.Renderer
   			  .866f,-.5f,0,
   			  1,0,0,
   			  .866f,.5f,0,
-  			  .5f,.866f,0
+  			  .5f,.866f,0,
+  			  0f,1f,0
     		},
-    		// one vertex short of a circle to make the pac man shape
-    		new short[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1},
-    		13);
+    		new float[]{
+      		  0.5f,0.5f,
+			  0.5f,0.0f,
+			  .25f,.067f,
+			  .067f,.25f,
+			  0.0f,0.5f,
+			  .067f,.75f,
+			  .25f,.933f,
+			  0.5f,1.0f,
+			  .75f,.933f,
+			  .933f,.75f,
+			  1.0f,0.5f,
+			  .933f,.25f,
+			  .75f,.067f,
+			  .5f,.0f
+      		},
+      		// one vertex short of a circle to make the pac man shape
+    		new short[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
+    		14);
         mWorld = new PhysicsWorld();
         mWorld.createWorld();
         mWorld.createGround();
@@ -181,18 +203,12 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
 		GLU.gluOrtho2D(gl, -12f, 12f, -20f, 20f);
-//		float[] boxTex = new float[]{
-//  		  0f,1f,
-//			  1f,1f,
-//			  1f,0f,
-//			  0f,0f
-//			  };
-    	mBox.loadTexture(gl, mContext, R.drawable.box, new float[]{
-    			  0f,0f,
-    			  1f,0f,
-    			  1f,1f,
-    			  0f,1f
-    			  });
+        gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+                GL10.GL_REPEAT);
+        gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+                GL10.GL_REPEAT);
+        mBox.loadTexture(gl, mContext, R.drawable.box);
+        mCircle.loadTexture(gl, mContext, R.drawable.soccerball);
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h)
@@ -200,21 +216,33 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glViewport(0, 0, w, h);
     }
 
-    private void drawControlPanel()
+    public void drawActiveBody(GL10 gl)
     {
-    	
+    	float x = 10f;
+    	float y = 17f;
+
+    	switch (activeModel) {
+    		case 0: mCircle.draw(gl, x, y, 0f); break;
+    		case 1: mBox.draw(gl, x, y, 0f); break;
+    		case 2: mLongBox.draw(gl, x, y, 0f); break;
+    	}
     }
 
     public void onDrawFrame(GL10 gl)
     {
     	gl.glClearColor(0, 0, .5f, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        gl.glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
+            GL10.GL_REPLACE);
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
-        drawControlPanel();
         // TODO: blech, hard coding the drawing of the ground objects
-        gl.glColor4f(1f, .5f, .5f, 1f);  // somewhat red
+        gl.glColor4f(1f, 1f, 1f, 1f);  // white
     	mCircle.draw(gl, 0f, circleY, 0f, 180f, circleR);
     	mBox.draw(gl, 0, -25f, 0f, 0f, 50f, 10f);
+
+    	drawActiveBody(gl);
 
     	gl.glColor4f(1f, 1f, 1f, 1f);  // white
     	Vec2 vec;

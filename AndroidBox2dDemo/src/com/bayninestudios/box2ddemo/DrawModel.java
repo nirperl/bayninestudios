@@ -21,6 +21,12 @@ public class DrawModel
 	private boolean hasTexture = false;
 	private int[] mTexture = new int[1];
 
+	public DrawModel(float[] coords, float[] tcoords, short[] icoords, int vertexes)
+	{
+		this(coords, icoords, vertexes);
+		mTexBuffer = makeFloatBuffer(tcoords);
+	}
+
 	public DrawModel(float[] coords, short[] icoords, int vertexes)
 	{
 		vertexCount = vertexes;
@@ -46,12 +52,11 @@ public class DrawModel
         return ib;
     }
 
-	public void loadTexture(GL10 gl, Context mContext, int mTex, float[] coords) {
-		mTexBuffer = makeFloatBuffer(coords);
+	public void loadTexture(GL10 gl, Context mContext, int mTex) {
 		hasTexture = true;
         gl.glGenTextures(1, mTexture, 0);
         gl.glBindTexture(GL10.GL_TEXTURE_2D, mTexture[0]);
-		Bitmap bitmap;
+        Bitmap bitmap;
     	bitmap = BitmapFactory.decodeResource(mContext.getResources(), mTex);
         GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
         bitmap.recycle();
@@ -59,13 +64,13 @@ public class DrawModel
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR );
 	}
 
-	public void draw(GL10 gl)
-	{
-		if (hasTexture)
-		{
+	public void draw(GL10 gl) {
+		if (hasTexture) {
 	        gl.glEnable(GL10.GL_TEXTURE_2D);
 	        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTexture[0]);
-			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
+		    gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
+		} else {
+			gl.glDisable(GL10.GL_TEXTURE_2D);
 		}
 	    gl.glFrontFace(GL10.GL_CCW);
 	    gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
