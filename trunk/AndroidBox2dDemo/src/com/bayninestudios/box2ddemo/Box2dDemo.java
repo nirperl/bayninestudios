@@ -1,5 +1,7 @@
 package com.bayninestudios.box2ddemo;
 
+import java.util.List;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -14,7 +16,6 @@ import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
@@ -69,7 +70,7 @@ class ClearGLSurfaceView extends GLSurfaceView
             		}
             		else
             		{
-            			mRenderer.addBall(event.getX(), event.getY());
+            			mRenderer.addModel(event.getX(), event.getY());
             		}
             	}
             }});
@@ -97,9 +98,10 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	private float circleY = -15f;
 	private float circleR = 5f;
 	private Context mContext;
-	SensorListener mySensorListener;
 	SensorEventListener mSensorEventListener;
-
+	private List<Sensor> sensors;
+	private Sensor accSensor;
+	
 	public ClearRenderer(Context newContext, SensorManager sensorMgr)
 	{
 		mContext = newContext;
@@ -172,32 +174,21 @@ class ClearRenderer implements GLSurfaceView.Renderer
 			{
 	        	float xAxis = event.values[SensorManager.DATA_X];
 	        	float yAxis = event.values[SensorManager.DATA_Y];
-	        	mWorld.setGrav(xAxis,yAxis);
+	        	mWorld.setGrav(-xAxis,-yAxis);
 			}
 			
 			@Override
 			public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 		};
 
-		// TODO: use SensorEventListener instead of SensorListener
-        mySensorListener = new SensorListener() {
-	    	public void onSensorChanged(int sensor, float[] values)
-	    	{
-	        	if (sensor == SensorManager.SENSOR_ACCELEROMETER)
-	        	{
-		        	float xAxis = values[SensorManager.DATA_X];
-		        	float yAxis = values[SensorManager.DATA_Y];
-		        	mWorld.setGrav(xAxis,yAxis);
-	        	}
-	    	}
-	    	public void onAccuracyChanged(int sensor, int accuracy) { }
-	    };
-		sensorMgr.registerListener(mySensorListener,
-				SensorManager.SENSOR_ACCELEROMETER,
-				SensorManager.SENSOR_DELAY_GAME);
-//		sensorMgr.registerListener(mSensorEventListener,
-//				SensorManager.SENSOR_ACCELEROMETER,
-//				SensorManager.SENSOR_DELAY_UI);
+		sensors = sensorMgr.getSensorList(Sensor.TYPE_ACCELEROMETER);
+        if(sensors.size() > 0)
+        {
+          accSensor = sensors.get(0);
+        } 
+		sensorMgr.registerListener(mSensorEventListener,
+				accSensor,
+				SensorManager.SENSOR_DELAY_UI);
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
@@ -237,7 +228,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
-        // TODO: blech, hard coding the drawing of the ground objects
+        // TODO: bleach, hard coding the drawing of the ground objects
         gl.glColor4f(1f, 1f, 1f, 1f);  // white
     	mCircle.draw(gl, 0f, circleY, 0f, 180f, circleR);
     	mBox.draw(gl, 0, -25f, 0f, 0f, 50f, 10f);
@@ -278,6 +269,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
         mWorld.update();
     }
 
+    // switches between which model gets dropped 
     public void switchModel()
     {
     	activeModel++;
@@ -287,7 +279,9 @@ class ClearRenderer implements GLSurfaceView.Renderer
     	}
     }
 
-    public void addBall(float x, float y)
+    // adds a model to the physics world.  The translation between the touch location
+    // and the physics world is hard coded to the Nexus One resolution
+    public void addModel(float x, float y)
     {
     	if (activeModel == 0) {
     		mWorld.addBall((x/20f) - 12f, (y - 400)/-20f);
