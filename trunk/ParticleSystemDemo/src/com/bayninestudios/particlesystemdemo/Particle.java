@@ -1,7 +1,5 @@
 package com.bayninestudios.particlesystemdemo;
 
-import java.util.Random;
-
 public class Particle {
 
 	// location
@@ -9,9 +7,14 @@ public class Particle {
 	public float y;
 	public float z;
 	
-	public Particle(Random gen) {
-		this.x = gen.nextFloat();
-		this.y = gen.nextFloat();
-		this.z = gen.nextFloat();
+	public Particle() {	
+	}
+
+	// the constructor which also assigns location
+	public Particle(float newx, float newy, float newz) {
+		super();
+		this.x = newx;
+		this.y = newy;
+		this.z = newz;
 	}
 }
