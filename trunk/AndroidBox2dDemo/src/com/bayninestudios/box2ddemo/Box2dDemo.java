@@ -5,6 +5,9 @@ import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import org.jbox2d.collision.PolygonDef;
+import org.jbox2d.collision.PolygonShape;
+import org.jbox2d.collision.CircleShape;
 import org.jbox2d.collision.Shape;
 import org.jbox2d.collision.ShapeType;
 import org.jbox2d.common.Vec2;
@@ -20,11 +23,16 @@ import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
+import android.widget.ToggleButton;
 
 public class Box2dDemo extends Activity
 {
+    private GLSurfaceView mGLView;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -47,33 +55,47 @@ public class Box2dDemo extends Activity
         super.onResume();
         mGLView.onResume();
     }
-
-    private GLSurfaceView mGLView;
 }
+
 
 class ClearGLSurfaceView extends GLSurfaceView
 {
+    ClearRenderer mRenderer;
+	
     public ClearGLSurfaceView(Context context, SensorManager sensorMgr) {
         super(context);
         mRenderer = new ClearRenderer(context, sensorMgr);
         setRenderer(mRenderer);
     }
 
-    public boolean onTouchEvent(final MotionEvent event) {
-        queueEvent(new Runnable(){
+//    public boolean onKeyUp(final int keyCode, KeyEvent msg) {
+//    	Log.d("key", "key event");
+//    	queueEvent(new Runnable(){
+//            public void run() {
+//            	if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER)
+//            	{
+//            	} else if (keyCode == KeyEvent.KEYCODE_MENU)
+//            	{
+//            	} 
+//            }});
+//            return true;
+//    }
+
+    public boolean onTouchEvent(final MotionEvent event)
+    {
+    	// Q: Seriously? on every touch setSize!
+    	// A: Yep. Until I find a better way
+    	mRenderer.setSize(this.getWidth(),this.getHeight());
+
+    	queueEvent(new Runnable(){
             public void run()
             {
             	if (event.getAction() == MotionEvent.ACTION_UP)
             	{
-            		if (event.getY() > 700f) {
-            			mRenderer.switchModel();
-            		}
-            		else
-            		{
-            			mRenderer.addModel(event.getX(), event.getY());
-            		}
+            		mRenderer.touchEvent(event.getX(), event.getY());
             	}
             }});
+        	// if this isn't here, multiple events happen
 	    	try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
@@ -81,8 +103,6 @@ class ClearGLSurfaceView extends GLSurfaceView
 			}
             return true;
         }
-
-        ClearRenderer mRenderer;
 }
 
 class ClearRenderer implements GLSurfaceView.Renderer
@@ -94,13 +114,15 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	private int activeModel = 1;
 
 	// TODO: shouldn't be here, should be in a config file or something
-	private float circleX = 0f;
+	private float circleX = -5f;
 	private float circleY = -15f;
 	private float circleR = 5f;
 	private Context mContext;
 	SensorEventListener mSensorEventListener;
 	private List<Sensor> sensors;
 	private Sensor accSensor;
+	private int width;
+	private int height;
 	
 	public ClearRenderer(Context newContext, SensorManager sensorMgr)
 	{
@@ -159,13 +181,14 @@ class ClearRenderer implements GLSurfaceView.Renderer
 			  .75f,.067f,
 			  .5f,.0f
       		},
-      		// one vertex short of a circle to make the pac man shape
     		new short[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
     		14);
         mWorld = new PhysicsWorld();
         mWorld.createWorld();
-        mWorld.createGround();
-        mWorld.createGroundCircle(circleX, circleY, circleR);
+        mWorld.addBox(0f, -25f, 50f, 10f, 0f, false);
+        mWorld.addBox(-10f, 0f, 10f, .2f, -.2f, false);
+        mWorld.addBox(12f, -15f, 2f, 10f, 0f, false);
+        mWorld.addBall(circleX, circleY, circleR, false);
 
         mSensorEventListener = new SensorEventListener()
         {	
@@ -194,6 +217,8 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
 		GLU.gluOrtho2D(gl, -12f, 12f, -20f, 20f);
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
                 GL10.GL_REPEAT);
         gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
@@ -225,14 +250,8 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
         gl.glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
             GL10.GL_REPLACE);
-        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
-        // TODO: bleach, hard coding the drawing of the ground objects
         gl.glColor4f(1f, 1f, 1f, 1f);  // white
-    	mCircle.draw(gl, 0f, circleY, 0f, 180f, circleR);
-    	mBox.draw(gl, 0, -25f, 0f, 0f, 50f, 10f);
-
     	drawActiveBody(gl);
 
     	gl.glColor4f(1f, 1f, 1f, 1f);  // white
@@ -240,29 +259,22 @@ class ClearRenderer implements GLSurfaceView.Renderer
         Body mBody = mWorld.getBodyList();
         do
         {
-        	// only draw non-static bodies for now
-        	if (!mBody.isStatic())
-        	{
-        		Shape mShape = mBody.getShapeList();
+    		Shape mShape = mBody.getShapeList();
+    		if (mShape != null)
+    		{
 		    	vec = mBody.getPosition();
 		    	float rot = mBody.getAngle() * 57f;  // convert radians to degrees
         		if (ShapeType.POLYGON_SHAPE == mShape.getType())
         		{
-        			Object userData = mShape.getUserData();
-        			// only checking if the userData is set, if it is, it's a long box
-        			// if not, it's a normal box.  should step into the shape and get
-        			// the x y instead
-        			if (userData == null) {
-        				mBox.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
-        			} else {
-        				mLongBox.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
-        			}
+        			Vec2[] vertexes = ((PolygonShape)mShape).getVertices();
+        	    	mBox.draw(gl, vec.x, vec.y, 0f, rot, vertexes[2].x, vertexes[2].y);
         		}
         		else if (ShapeType.CIRCLE_SHAPE == mShape.getType())
         		{
-			    	mCircle.draw(gl, vec.x, vec.y, 0f, rot, 0.98f);
+        			float radius = ((CircleShape)mShape).m_radius;
+			    	mCircle.draw(gl, vec.x, vec.y, 0f, rot, radius);
         		}
-        	}
+    		}
 	        mBody = mBody.getNext();
         }
         while (mBody != null);
@@ -279,16 +291,39 @@ class ClearRenderer implements GLSurfaceView.Renderer
     	}
     }
 
-    // adds a model to the physics world.  The translation between the touch location
-    // and the physics world is hard coded to the Nexus One resolution
-    public void addModel(float x, float y)
+    
+    // interprets the touch event. Either switches models or
+    // adds a model to the world.
+    public void touchEvent(float x, float y)
     {
-    	if (activeModel == 0) {
-    		mWorld.addBall((x/20f) - 12f, (y - 400)/-20f);
-    	} else if (activeModel == 1) {
-        	mWorld.addBox((x/20f) - 12f, (y - 400)/-20f);
-    	} else if (activeModel == 2) {
-        	mWorld.addLongBox((x/20f) - 12f, (y - 400)/-20f);
+    	// look at all those magic numbers, truly magic!
+    	// calculate world X and Y from the touch co-ords
+    	float worldX = ((x-(this.width/2))*12f)/(this.width/2);
+    	float worldY = ((y-(this.height/2))*-20f)/(this.height/2);
+
+    	// if the user clicks lower than the box at the bottom
+    	// switch models
+    	if (worldY < -15f)
+    	{
+    		this.switchModel();
     	}
+    	else
+    	{
+	    	if (activeModel == 0) {
+	    		mWorld.addBall(worldX, worldY, 0.98f, true);
+	    	} else if (activeModel == 1) {
+	        	mWorld.addBox(worldX, worldY, .98f, .98f, 0f, true);
+	    	} else if (activeModel == 2) {
+	        	mWorld.addBox(worldX, worldY, .2f, 2f, 0f, true);
+	    	}
+    	}
+    }
+    
+    // the easiest way to communicate to the renderer what the
+    // size of the screen is
+    public void setSize(int x, int y)
+    {
+    	this.width = x;
+    	this.height = y;
     }
 }
