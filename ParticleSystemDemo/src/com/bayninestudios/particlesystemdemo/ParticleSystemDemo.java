@@ -55,6 +55,7 @@ class ClearRenderer implements GLSurfaceView.Renderer {
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLU.gluPerspective(gl, 15.0f, 80.0f/48.0f, 1, 100);
         GLU.gluLookAt(gl, 0f, -10f, 15f, 0.5f, 0.0f, 0f, 0.0f, 1.0f, 1.0f);
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
