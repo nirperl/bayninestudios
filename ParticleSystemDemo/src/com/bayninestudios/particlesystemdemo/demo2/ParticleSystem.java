@@ -1,4 +1,4 @@
-package com.bayninestudios.particlesystemdemo;
+package com.bayninestudios.particlesystemdemo.demo2;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
