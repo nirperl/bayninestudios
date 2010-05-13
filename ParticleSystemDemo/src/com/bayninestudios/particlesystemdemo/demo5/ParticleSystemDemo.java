@@ -1,4 +1,4 @@
-package com.bayninestudios.particlesystemdemo.demo3;
+package com.bayninestudios.particlesystemdemo.demo5;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class ParticleSystemDemo3 extends Activity {
+public class ParticleSystemDemo extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ class ClearRenderer implements GLSurfaceView.Renderer {
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLU.gluPerspective(gl, 15.0f, 80.0f/48.0f, 1, 100);
-        GLU.gluLookAt(gl, 0f, -10f, 15f, 0.0f, 0.0f, 0f, 0.0f, 1.0f, 1.0f);
+        GLU.gluLookAt(gl, 0f, -17f, 5f, 0.0f, 0.0f, 1f, 0.0f, 1.0f, 0.0f);
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     }
 
@@ -87,7 +87,7 @@ class ClearRenderer implements GLSurfaceView.Renderer {
     }
 
     public void onDrawFrame(GL10 gl) {
-    	gl.glClearColor(0, 0, .5f, 1.0f);
+    	gl.glClearColor(0, 0, 0, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
         mParticleSystem.update();
         mParticleSystem.draw(gl);
