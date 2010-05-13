@@ -5,10 +5,13 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class ParticleSystemDemo extends Activity {
     /** Called when the activity is first created. */
@@ -30,6 +33,27 @@ public class ParticleSystemDemo extends Activity {
     protected void onResume() {
         super.onResume();
         mGLView.onResume();
+    }
+
+    /* Creates the menu items */
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        menu.add(0, 1, 0, "Visit bayninestudios.com");
+        return true;
+    }
+
+    /* Handles item selections */
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+        	case 1:
+        		Intent myIntent = new Intent(Intent.ACTION_VIEW,
+        				android.net.Uri.parse("http://www.bayninestudios.com"));
+        		startActivity(myIntent);
+        		return true;
+        }
+        return false;
     }
 
     private GLSurfaceView mGLView;
