@@ -124,7 +124,15 @@ public class ParticleSystem {
     	// add the particles slowly
     	if (activeParticles < PARTICLECOUNT)
     	{
-    		activeParticles = activeParticles + 2;
+    		// calculate how many particles per frame.  I have set
+    		// the particles per second at 100
+    		int addParticleCount = new Float(100f * timeFrame).intValue();
+    		// always be adding at least one particle
+    		if (addParticleCount < 1)
+    		{
+    			addParticleCount = 1;
+    		}
+    		activeParticles = activeParticles + addParticleCount;
     		if (activeParticles > PARTICLECOUNT)
     		{
     			activeParticles = PARTICLECOUNT;
