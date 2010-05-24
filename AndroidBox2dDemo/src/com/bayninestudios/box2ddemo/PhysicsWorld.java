@@ -12,7 +12,7 @@ import android.util.Log;
 
 public class PhysicsWorld
 {
-    final private int MAXBALLS = 50;
+    final private int MAXBALLS = 20;
     final private float FRAMERATE = 30f;
 
     private float timeStep = (1f / FRAMERATE);
@@ -63,8 +63,11 @@ public class PhysicsWorld
 	        {
 	        	groundBody.setMassFromShapes();
 	        }
-	        
-	        count++;
+	        // only increment the count when dynamic
+	        if (dynamic)
+	        {
+	        	count++;
+	        }
     	}
     }
 
@@ -85,8 +88,11 @@ public class PhysicsWorld
 	        {
 	        	groundBody2.setMassFromShapes();
 	        }
-	        
-	        count++;
+	        // only increment the count when dynamic
+	        if (dynamic)
+	        {
+	        	count++;
+	        }
     	}
     }
 
