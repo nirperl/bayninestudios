@@ -1,4 +1,4 @@
-package com.bayninestudios.particlesystemdemo.demo6;
+package com.bayninestudios.particlesystemdemo.demo7;
 
 public class Particle {
 
