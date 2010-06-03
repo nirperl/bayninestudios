@@ -20,7 +20,8 @@ public class Launcher extends ListActivity {
 			"Fountain 2 - Time to Live, Color, Sideways",
 			"Fountain 3 - Same as 3 but less time to live",
 			"Fountain 4 - Slowly add particles and bounce",
-			"System 5 - TBA"
+			"Pyro 1 - Slower gravity and air resistance",
+			"Pyro 2 - Touch for pyro!"
 		};
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, examples));
 	}
@@ -52,6 +53,10 @@ public class Launcher extends ListActivity {
 				break;
 			case 5:
 				intent = new Intent(this, com.bayninestudios.particlesystemdemo.demo6.ParticleSystemDemo.class);
+				startActivity(intent);
+				break;
+			case 6:
+				intent = new Intent(this, com.bayninestudios.particlesystemdemo.demo7.ParticleSystemDemo.class);
 				startActivity(intent);
 				break;
 		}

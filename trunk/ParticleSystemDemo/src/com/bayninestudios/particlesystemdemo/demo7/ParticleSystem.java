@@ -1,4 +1,4 @@
-package com.bayninestudios.particlesystemdemo.demo6;
+package com.bayninestudios.particlesystemdemo.demo7;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -11,6 +11,8 @@ import javax.microedition.khronos.opengles.GL10;
 public class ParticleSystem {
 	private Particle[] mParticles;
 
+	public float x, y, z;
+
 	// probably a good idea to add these two to the constructor
 	private int PARTICLECOUNT = 50;
 	private int activeParticles = 0;
@@ -20,8 +22,6 @@ public class ParticleSystem {
 	private float GRAVITY = .2f;
 	private float AIR_RESISTANCE = 15.0f;
 	private float PARTICLESIZE = 0.02f;
-	// don't let particles go below this z value
-	private float FLOOR = 0.0f;
 	
 	// this is used to track the time of the last update so that
 	// we can calculate a frame rate to find out how far a particle
@@ -82,6 +82,8 @@ public class ParticleSystem {
     public void draw(GL10 gl)
     {
     	gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
+		gl.glPushMatrix();
+		gl.glTranslatef(x, y, z);
 		for (int i = 0; i < PARTICLECOUNT; i++)
 		{
 			if (mParticles[i].timeToLive > 0f)
@@ -93,33 +95,31 @@ public class ParticleSystem {
 			    gl.glPopMatrix();
 			}
     	}
+		gl.glPopMatrix();
 	}
 
     private void initParticle(int i)
-    {
-		// loop through all the particles and create new instances of each one
-		mParticles[i].x = 0f;
-		mParticles[i].y = 0f;
-		mParticles[i].z = 0f;
-
-		float FIRST = 20f;
-		mParticles[i].dx = (gen.nextFloat()*FIRST) - (FIRST/2f);
-		mParticles[i].dy = (gen.nextFloat()*FIRST) - (FIRST/2f);
-		mParticles[i].dz = (gen.nextFloat()*FIRST) - (FIRST/2f);
-
-		// completely random color
-		mParticles[i].red = (gen.nextFloat()*.5f)+.5f;
-		mParticles[i].green = (gen.nextFloat()*.5f)+.5f;
-		mParticles[i].blue = (gen.nextFloat()*.5f)+.5f;
+	{
+	    // loop through all the particles and create new instances of each one
+	    mParticles[i].x = 0f;
+	    mParticles[i].y = 0f;
+	    mParticles[i].z = 0f;
+	
+	    float DOUBLESPEED = 20f;
+	    mParticles[i].dx = (gen.nextFloat()*DOUBLESPEED) - (DOUBLESPEED/2f);
+	    mParticles[i].dy = (gen.nextFloat()*DOUBLESPEED) - (DOUBLESPEED/2f);
+	    mParticles[i].dz = (gen.nextFloat()*DOUBLESPEED) - (DOUBLESPEED/2f);
+	
+	    // completely random color
+	    mParticles[i].red = (gen.nextFloat()*.5f)+.5f;
+	    mParticles[i].green = (gen.nextFloat()*.5f)+.5f;
+	    mParticles[i].blue = (gen.nextFloat()*.5f)+.5f;
 		
-		// set time to live
-        mParticles[i].timeToLive = (gen.nextFloat()*1.5f) + 0f;
-//        mParticles[i].timeToLive = 2f;
-        mParticles[i].respawnTime = 3f;
+	    // set time to live
+	    mParticles[i].timeToLive = (gen.nextFloat()*1.5f) + 0f;
+	}
 
-    }
-
-    // update the particle system, move everything
+	// update the particle system, move everything
     public void update()
     {
     	// calculate time between frames in seconds
@@ -127,6 +127,8 @@ public class ParticleSystem {
     	float timeFrame = (currentTime - lastTime)/1000f;
     	// replace the last time with the current time.
     	lastTime = currentTime;
+    	// dead particle count, kill the system if all dead
+    	int deadCount = 0;
 
     	// move the particles
     	for (int i = 0; i < PARTICLECOUNT; i++)
@@ -147,13 +149,16 @@ public class ParticleSystem {
 			mParticles[i].z = mParticles[i].z - (GRAVITY*timeFrame);
 
 			// fourth decrement the time to live for the particle,
-			// if it gets below zero, respawn it
+			// if it gets below zero, add to the dead count
 			mParticles[i].timeToLive = mParticles[i].timeToLive - timeFrame;
-			mParticles[i].respawnTime = mParticles[i].respawnTime - timeFrame;
-			if (mParticles[i].respawnTime < 0f)
+			if (mParticles[i].timeToLive < 0f)
 			{
-				initParticle(i);
+				deadCount++;
 			}
 		}
+    	if (deadCount == PARTICLECOUNT)
+    	{
+//    		systemAlive = false;
+    	}
     }
 }

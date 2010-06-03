@@ -1,4 +1,4 @@
-package com.bayninestudios.particlesystemdemo.demo6;
+package com.bayninestudios.particlesystemdemo.demo7;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -12,6 +12,7 @@ import android.opengl.GLU;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 
 public class ParticleSystemDemo extends Activity {
     /** Called when the activity is first created. */
@@ -56,33 +57,65 @@ public class ParticleSystemDemo extends Activity {
         return false;
     }
 
-    private GLSurfaceView mGLView;
+	private GLSurfaceView mGLView;
 }
 
 class ClearGLSurfaceView extends GLSurfaceView {
-    public ClearGLSurfaceView(Context context) {
+
+	ClearRenderer mRenderer;
+
+	public ClearGLSurfaceView(Context context) {
         super(context);
         mRenderer = new ClearRenderer();
         setRenderer(mRenderer);
     }
 
-    ClearRenderer mRenderer;
+    public boolean onTouchEvent(final MotionEvent event)
+    {
+    	mRenderer.setSize(this.getWidth(),this.getHeight());
+    	queueEvent(new Runnable()
+    	{
+            public void run()
+            {
+        		mRenderer.touchEvent(event.getX(), event.getY(), event.getAction());
+            }
+        });
+    	// if this isn't here, multiple events happen on touch
+    	try {
+			Thread.sleep(20);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+        return true;
+    }
 }
 
 class ClearRenderer implements GLSurfaceView.Renderer
 {
-	private ParticleSystem mParticleSystem;
+	private ParticleSystem[] mParticleSystems;
+	private int systemCount = 0;
+	private int screenX, screenY;
 
 	public ClearRenderer()
 	{
-		mParticleSystem = new ParticleSystem();
+		mParticleSystems = new ParticleSystem[40];
 	}
 
-    @Override
+	// I haven't found a good way to initialize the size so that
+	// touch events are at the right GL co-ords.  I think it might be
+	// better to do the translation at the touch event
+    public void setSize(int width, int height)
+    {
+    	this.screenX = width;
+    	this.screenY = height;
+	}
+
+	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
         GLU.gluPerspective(gl, 15.0f, 48.0f/80.0f, 1, 100);
-        GLU.gluLookAt(gl, 0f, -20f, 0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+//        GLU.gluLookAt(gl, 0f, -17f, 5f, 0.0f, 0.0f, 1f, 0.0f, 1.0f, 0.0f);
+        GLU.gluLookAt(gl, 0f, -10f, 0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     }
 
@@ -97,7 +130,25 @@ class ClearRenderer implements GLSurfaceView.Renderer
     {
     	gl.glClearColor(0, 0, 0, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-        mParticleSystem.update();
-        mParticleSystem.draw(gl);
+        for (int i=0; i < systemCount; i++)
+        {
+	        mParticleSystems[i].update();
+	        mParticleSystems[i].draw(gl);
+        }
+    }
+
+    // init a new particle system on touch event
+    public void touchEvent(float x, float y, int eventCode)
+    {
+    	if (eventCode == MotionEvent.ACTION_UP)
+    	{
+    		// only allow 40 explosions.
+	    	if (systemCount < 40) {
+	    		mParticleSystems[systemCount] = new ParticleSystem();
+	    		mParticleSystems[systemCount].x = (x - (screenX/2)) / (screenX/2);
+	    		mParticleSystems[systemCount].z = (y - (screenY/2)) / (screenX/-2);
+	    		systemCount++;
+	    	}
+    	}
     }
 }
