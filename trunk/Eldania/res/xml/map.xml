@@ -1,0 +1,19 @@
+<tiles>
+	<tile x="0" y="0" look="1" />
+
+	<tile x="50" y="10" look="1" />
+    <tile x="50" y="11" look="1" />
+    <tile x="51" y="10" look="1" />
+	<tile x="51" y="11" look="1" />
+
+	<tile x="49" y="10" look="2" />
+	<tile x="49" y="9" look="2" />
+    <tile x="49" y="8" look="2" />
+    <tile x="49" y="7" look="2" />
+    <tile x="49" y="6" look="2" />
+    <tile x="49" y="5" look="2" />
+    <tile x="49" y="4" look="2" />
+    <tile x="49" y="3" look="2" />
+    <tile x="49" y="2" look="2" />
+    <tile x="49" y="1" look="2" />
+</tiles>
