@@ -61,7 +61,7 @@ public class Speedo {
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 		gl.glPushMatrix();
         gl.glColor4f(1f, 1f, 1f, 1f);
-//		gl.glTranslatef(-2.0f, 0f, 3.0f);
+		gl.glTranslatef(2.2f, 0f, 0.0f);
 		gl.glRotatef((-1.5f*mFrameRate)+90f, 0f, 0f, 1f);
 	    gl.glFrontFace(GL10.GL_CCW);
 	    gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mFVertexBuffer);
