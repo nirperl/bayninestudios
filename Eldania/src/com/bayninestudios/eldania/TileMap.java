@@ -11,29 +11,29 @@ import android.util.Log;
 
 public class TileMap
 {
-	private int[][] tiles;
+	private TileDef[][] tiles;
 	Random gen = new Random(System.currentTimeMillis());
 
 	public TileMap()
 	{
-		tiles = new int[100][100];
+		tiles = new TileDef[100][100];
 		for (int y=0; y < 100; y++)
 		{
 			for (int x=0; x < 100; x++)
 			{
-				tiles[x][y] = gen.nextInt(3);
+				tiles[x][y].look = gen.nextInt(3);
 			}
 		}
 	}
 	
 	public TileMap(Context context, int xmlResource)
 	{
-		tiles = new int[100][100];
+		tiles = new TileDef[100][100];
 		for (int y=0; y < 100; y++)
 		{
 			for (int x=0; x < 100; x++)
 			{
-				tiles[x][y] = 0;
+				tiles[x][y] = new TileDef();
 			}
 		}
 		try
@@ -46,7 +46,11 @@ public class TileMap
 						int x = xrp.getAttributeIntValue(null, "x", 0);
 						int y = xrp.getAttributeIntValue(null, "y", 0);
 						int look = xrp.getAttributeIntValue(null, "look", 0);
-						tiles[x][y] = look;
+						int passable = xrp.getAttributeIntValue(null, "passable", 0);
+						int interact = xrp.getAttributeIntValue(null, "interact", 0);
+						tiles[x][y].look = look;
+						tiles[x][y].passable = passable;
+						tiles[x][y].interact = interact;
 					}
 				}
 				else if (xrp.getEventType() == XmlResourceParser.END_TAG) {
@@ -72,12 +76,12 @@ public class TileMap
 	
 	public int getTile(int x, int y)
 	{
-		return tiles[x][y];
+		return tiles[x][y].look;
 	}
 
 	public boolean checkPassible(int x, int y)
 	{
-		if (tiles[x][y] == 0)
+		if (tiles[x][y].passable == 0)
 		{
 			return false;
 		}
