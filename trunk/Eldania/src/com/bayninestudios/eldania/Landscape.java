@@ -10,6 +10,8 @@ public class Landscape {
 	private DrawModel dirtTile;
 	private DrawModel grassTile;
 	private DrawModel waterTile;
+	private DrawModel beachTile;
+	private DrawModel sandTile;
 	private TileMap map;
 	public boolean useTextures;
 
@@ -19,20 +21,24 @@ public class Landscape {
 		dirtTile = new DrawModel(context, R.xml.tile);
 		grassTile = new DrawModel(context, R.xml.tile);
 		waterTile = new DrawModel(context, R.xml.tile);
+		beachTile = new DrawModel(context, R.xml.tile);
+		sandTile = new DrawModel(context, R.xml.tile);
 		map = new TileMap(context, R.xml.map);
-		useTextures = false;
+		useTextures = true;
 	}
 
 	public void loadTextures(GL10 gl, Context context)
 	{
 		dirtTile.loadTexture(gl, context, R.drawable.dirt12);
-		grassTile.loadTexture(gl, context, R.drawable.grass_sm);
+		grassTile.loadTexture(gl, context, R.drawable.acharya_grass3);
 		waterTile.loadTexture(gl, context, R.drawable.water);
+		beachTile.loadTexture(gl, context, R.drawable.beach);
+		sandTile.loadTexture(gl, context, R.drawable.sand);
 	}
 
 	public void draw(GL10 gl, float charX, float charY)
 	{
-		for (int y = -2; y < 4; y++)
+		for (int y = -3; y < 4; y++)
 		{
 			for (int x = -4; x < 5; x++)
 			{
@@ -58,6 +64,20 @@ public class Landscape {
 					gl.glColor4f(0.5f, 0.25f, 0.25f, 1f);
 					if (useTextures)
 						dirtTile.draw(gl, tileX, tileY, 0f);
+					else tile.draw(gl, tileX, tileY, 0f);
+				}
+				else if (tileType == 3)
+				{
+					gl.glColor4f(0.5f, 0.25f, 0.25f, 1f);
+					if (useTextures)
+						beachTile.draw(gl, tileX, tileY, 0f);
+					else tile.draw(gl, tileX, tileY, 0f);
+				}
+				else if (tileType == 4)
+				{
+					gl.glColor4f(0.5f, 0.25f, 0.25f, 1f);
+					if (useTextures)
+						sandTile.draw(gl, tileX, tileY, 0f);
 					else tile.draw(gl, tileX, tileY, 0f);
 				}
 			}

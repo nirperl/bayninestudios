@@ -47,10 +47,12 @@ public class Eldania extends Activity
 class ClearGLSurfaceView extends GLSurfaceView
 {
 	ClearRenderer mRenderer;
+	Activity mActivity;
 	
     public ClearGLSurfaceView(Context context)
     {
         super(context);
+        mActivity = (Activity)context;
         mRenderer = new ClearRenderer(context);
         setRenderer(mRenderer);
         setFocusable(true);
@@ -89,6 +91,7 @@ class ClearGLSurfaceView extends GLSurfaceView
             	}
             	else if (keyCode == KeyEvent.KEYCODE_BACK)
             	{
+            		mActivity.finish();
             	} 
             }});
             return true;
@@ -123,6 +126,14 @@ class ClearGLSurfaceView extends GLSurfaceView
             	{
             		mRenderer.toggleTextures();
             	} 
+            	else if (keyCode == KeyEvent.KEYCODE_P)
+            	{
+            		mRenderer.zoom(true);
+            	} 
+            	else if (keyCode == KeyEvent.KEYCODE_M)
+            	{
+            		mRenderer.zoom(false);
+            	} 
             	else if (keyCode == KeyEvent.KEYCODE_BACK)
             	{
             	} 
@@ -144,9 +155,6 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	private float mCameraY = -8f*zoom;
 	private float mCameraZ = 12f*zoom;
 
-	private float charDX = 0.0f;
-	private float charDY = 0.0f;
-	private float MOVESPEED = 0.03f;
 	private boolean onQuest = false;
 
 	public ClearRenderer(Context context)
@@ -163,6 +171,13 @@ class ClearRenderer implements GLSurfaceView.Renderer
 		if (mLandscape.useTextures)
 			mLandscape.useTextures = false;
 		else mLandscape.useTextures = true;
+	}
+
+	public void zoom(boolean in)
+	{
+		if (in)
+			zoom = zoom - 0.1f;
+		else zoom = zoom + 0.1f;
 	}
 
 	public void toggleQuest()
@@ -193,42 +208,12 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
 	public void stopCharacter(int keyCode)
 	{
-		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
-		{
-			charDX = charDX + MOVESPEED;
-		}
-		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
-		{
-			charDX = charDX - MOVESPEED;
-		}
-		if (keyCode == KeyEvent.KEYCODE_DPAD_UP)
-		{
-			charDY = charDY - MOVESPEED;
-		}
-		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
-		{
-			charDY = charDY + MOVESPEED;
-		}
+		mPlayer.moveCharacter(keyCode, true);
 	}
 
 	public void moveCharacter(int keyCode)
 	{
-		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
-		{
-			charDX = charDX - MOVESPEED;
-		}
-		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
-		{
-			charDX = charDX + MOVESPEED;
-		}
-		if (keyCode == KeyEvent.KEYCODE_DPAD_UP)
-		{
-			charDY = charDY + MOVESPEED;
-		}
-		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
-		{
-			charDY = charDY - MOVESPEED;
-		}
+		mPlayer.moveCharacter(keyCode, false);
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
@@ -258,10 +243,9 @@ class ClearRenderer implements GLSurfaceView.Renderer
     {
     	mSpeedo.setStartTime();
 
-    	// not needed until I move the camera around
-//    	gl.glLoadIdentity();
-//        GLU.gluPerspective(gl, 15.0f, 80.0f/48.0f, 1, 100);
-//        GLU.gluLookAt(gl, mCameraX, mCameraY, mCameraZ, 0.0f, 0.0f, 0f, 0.0f, 1.0f, 1.0f);
+    	gl.glLoadIdentity();
+        GLU.gluPerspective(gl, 15.0f, 80.0f/48.0f, 1, 100);
+        GLU.gluLookAt(gl, mCameraX, mCameraY*zoom, mCameraZ*zoom, 0.0f, 0.0f, 0f, 0.0f, 1.0f, 1.0f);
 
         gl.glClearColor(0f, 0f, 0f, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -280,22 +264,10 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
         gl.glPopMatrix();
 
-        mPlayer.setFacing(charDX, charDY);
-
         // draw player
         mPlayer.draw(gl);
 
-        float newCharX = mPlayer.x + charDX;
-        float newCharY = mPlayer.y + charDY;
-
-        if (mLandscape.checkPassable(newCharX, mPlayer.y))
-        {
-        	mPlayer.x = newCharX;
-        }
-        if (mLandscape.checkPassable(mPlayer.x, newCharY))
-        {
-        	mPlayer.y = newCharY;
-        }
+        mPlayer.update(mLandscape);
 
         mSpeedo.setEndTime();
         mSpeedo.draw(gl);
