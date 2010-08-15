@@ -49,19 +49,22 @@ public class DrawModel
 			while (xrp.getEventType() != XmlResourceParser.END_DOCUMENT) {
 				if (xrp.getEventType() == XmlResourceParser.START_TAG) {
 					String s = xrp.getName();
-					if (s.equals("faces")) {
+					if (s.equals("faces"))
+					{
 						int i = xrp.getAttributeIntValue(null, "count", 0);
 						icoords = new short[i*3];
 						vertexCount = i*3;
 					}
-					if (s.equals("geometry")) {
+					if (s.equals("geometry"))
+					{
 						int i = xrp.getAttributeIntValue(null, "vertexcount", 0);
 						Log.d("coords",Integer.toString(i));
 						coords = new float[i*3];
 						ncoords = new float[i*3];
 						tcoords = new float[i*2];
 					}
-					if (s.equals("position")) {
+					if (s.equals("position"))
+					{
 						float x = xrp.getAttributeFloatValue(null, "x", 0);
 						float y = xrp.getAttributeFloatValue(null, "y", 0);
 						float z = xrp.getAttributeFloatValue(null, "z", 0);
@@ -72,7 +75,8 @@ public class DrawModel
 							coords[vertexIndex++] = z + tz;
 						}
 					}
-					if (s.equals("normal")) {
+					if (s.equals("normal"))
+					{
 						float x = xrp.getAttributeFloatValue(null, "x", 0);
 						float y = xrp.getAttributeFloatValue(null, "y", 0);
 						float z = xrp.getAttributeFloatValue(null, "z", 0);
@@ -84,7 +88,8 @@ public class DrawModel
 							ncoords[normalIndex++] = z;
 						}
 					}
-					if (s.equals("texcoord")) {
+					if (s.equals("texcoord"))
+					{
 						float u = xrp.getAttributeFloatValue(null, "u", 0);
 						float v = xrp.getAttributeFloatValue(null, "v", 0);
 						if (ncoords != null)
@@ -93,7 +98,8 @@ public class DrawModel
 							tcoords[texIndex++] = v;
 						}
 					}
-					if (s.equals("face")) {
+					if (s.equals("face"))
+					{
 						short v1 = (short)xrp.getAttributeIntValue(null, "v1", 0);
 						short v2 = (short)xrp.getAttributeIntValue(null, "v2", 0);
 						short v3 = (short)xrp.getAttributeIntValue(null, "v3", 0);
@@ -131,7 +137,8 @@ public class DrawModel
 	}
 
 	// used to make native order float buffers
-	private FloatBuffer makeFloatBuffer(float[] arr) {
+	private FloatBuffer makeFloatBuffer(float[] arr)
+	{
         ByteBuffer bb = ByteBuffer.allocateDirect(arr.length*4);
         bb.order(ByteOrder.nativeOrder());
         FloatBuffer fb = bb.asFloatBuffer();
@@ -141,7 +148,8 @@ public class DrawModel
     }
 
 	// used to make native order short buffers
-    private ShortBuffer makeShortBuffer(short[] arr) {
+    private ShortBuffer makeShortBuffer(short[] arr)
+    {
         ByteBuffer bb = ByteBuffer.allocateDirect(arr.length*4);
         bb.order(ByteOrder.nativeOrder());
         ShortBuffer ib = bb.asShortBuffer();
@@ -150,7 +158,8 @@ public class DrawModel
         return ib;
     }
 
-	public void loadTexture(GL10 gl, Context mContext, int mTex) {
+	public void loadTexture(GL10 gl, Context mContext, int mTex)
+	{
 		hasTexture = true;
         gl.glGenTextures(1, mTexture, 0);
         gl.glBindTexture(GL10.GL_TEXTURE_2D, mTexture[0]);
@@ -162,7 +171,8 @@ public class DrawModel
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR );
 	}
 
-	public void draw(GL10 gl) {
+	public void draw(GL10 gl)
+	{
 		if (hasTexture)
 		{
 	        gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -176,7 +186,8 @@ public class DrawModel
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 	}
 
-	public void draw(GL10 gl, float x, float y, float z, float rot, float scale) {
+	public void draw(GL10 gl, float x, float y, float z, float rot, float scale)
+	{
 		gl.glPushMatrix();
 		gl.glTranslatef(x, y, z);
 		gl.glRotatef(rot, 0f, 0f, 1f);
@@ -185,7 +196,8 @@ public class DrawModel
 	    gl.glPopMatrix();
 	}
 
-	public void draw(GL10 gl, float x, float y, float z, float rot) {
+	public void draw(GL10 gl, float x, float y, float z, float rot)
+	{
 		gl.glPushMatrix();
 		gl.glTranslatef(x, y, z);
 		gl.glRotatef(rot, 0f, 0f, 1f);
@@ -193,7 +205,8 @@ public class DrawModel
 	    gl.glPopMatrix();
 	}
 
-	public void draw(GL10 gl, float x, float y, float z) {
+	public void draw(GL10 gl, float x, float y, float z)
+	{
 		gl.glPushMatrix();
 		gl.glTranslatef(x, y, z);
 		this.draw(gl);
