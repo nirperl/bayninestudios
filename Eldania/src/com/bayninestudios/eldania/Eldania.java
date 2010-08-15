@@ -231,6 +231,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
         		GL10.GL_REPLACE);
 
+        
         mLandscape.loadTextures(gl, mContext);
     }
 
