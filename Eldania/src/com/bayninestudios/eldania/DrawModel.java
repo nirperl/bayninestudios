@@ -186,6 +186,16 @@ public class DrawModel
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 	}
 
+	public void draw(GL10 gl, float x, float y, float z, float rot, Vector3 scale)
+	{
+		gl.glPushMatrix();
+		gl.glTranslatef(x, y, z);
+		gl.glRotatef(rot, 0f, 0f, 1f);
+		gl.glScalef(scale.x, scale.y, scale.z);
+		this.draw(gl);
+	    gl.glPopMatrix();
+	}
+
 	public void draw(GL10 gl, float x, float y, float z, float rot, float scale)
 	{
 		gl.glPushMatrix();

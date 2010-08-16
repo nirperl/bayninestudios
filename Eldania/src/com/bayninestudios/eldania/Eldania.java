@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import android.view.WindowManager;
 public class Eldania extends Activity
 {
     private GLSurfaceView mGLView;
+    private PowerManager.WakeLock wl;
 
     /** Called when the activity is first created. */
     @Override
@@ -29,18 +31,21 @@ public class Eldania extends Activity
         setContentView(mGLView);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);  
+        wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");    }
 
     @Override
     protected void onPause() {
         super.onPause();
         mGLView.onPause();
+        wl.release();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mGLView.onResume();
+        wl.acquire();
     }
 }
 
@@ -73,6 +78,7 @@ class ClearGLSurfaceView extends GLSurfaceView
     {
     	queueEvent(new Runnable(){
             public void run() {
+//            	mRenderer.processKeyEvent(keyCode, KeyEvent.ACTION_UP);
             	if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
             	{
             		mRenderer.stopCharacter(keyCode);
@@ -253,8 +259,6 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
         gl.glClearColor(0f, 0f, 0f, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-        
-
 
         gl.glPushMatrix();
         gl.glTranslatef(-mPlayer.x, -mPlayer.y, -mPlayer.z);
@@ -273,7 +277,14 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
         mPlayer.update(mLandscape);
 
-        mSpeedo.setEndTime();
+        // start drawing the dash board
+    	gl.glLoadIdentity();
+		GLU.gluOrtho2D(gl, -5f, 5f, -3f, 3f);
+
+		mPlayer.drawDash(gl);
+
+		mSpeedo.setEndTime();
         mSpeedo.draw(gl);
+
     }
 }
