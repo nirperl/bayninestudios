@@ -155,8 +155,6 @@ class ClearRenderer implements GLSurfaceView.Renderer
 	private float mCameraY = -8f*zoom;
 	private float mCameraZ = 12f*zoom;
 
-	private boolean onQuest = false;
-
 	public ClearRenderer(Context context)
 	{
 		mContext = context;
@@ -180,11 +178,16 @@ class ClearRenderer implements GLSurfaceView.Renderer
 		else zoom = zoom + 0.1f;
 	}
 
-	public void toggleQuest()
+	public void toggleCombat()
 	{
-		if (onQuest)
-			onQuest = false;
-		else onQuest = true;
+		if (mPlayer.inCombat)
+		{
+			mPlayer.inCombat = false;
+		}
+		else
+		{
+			mPlayer.inCombat = true;
+		}
 	}
 	public void playerAction()
 	{
@@ -202,7 +205,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
 		if ((newY == 12) && (newX == 50))
 		{
-			toggleQuest();
+			toggleCombat();
 		}
 	}
 
@@ -258,7 +261,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
         mLandscape.draw(gl, mPlayer.x, mPlayer.y);
 
         // draw NPC
-        if (onQuest)
+        if (mPlayer.inCombat)
         	gl.glColor4f(1f, .3f, .3f, 1f);
         else gl.glColor4f(1f, 1f, 0f, 1f);
         mNPC.draw(gl, 50.5f, 12.5f, 0f);

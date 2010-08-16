@@ -12,6 +12,7 @@ public class Player
 	public Vector2 position;
 	public float x,y,z;
 	public float dx,dy;
+	public boolean inCombat = false;
 	private float MOVESPEED = 0.03f;
 	
 	public Player(Context context)
@@ -51,26 +52,34 @@ public class Player
 
 	public void moveCharacter(int keyCode, boolean keyUp)
 	{
-		float newMove = MOVESPEED;
-		if (keyUp)
-			newMove = MOVESPEED * -1f;
-		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
+		if (!inCombat)
 		{
-			dx = dx - newMove;
+			float newMove = MOVESPEED;
+			if (keyUp)
+				newMove = MOVESPEED * -1f;
+			if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
+			{
+				dx = dx - newMove;
+			}
+			if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
+			{
+				dx = dx + newMove;
+			}
+			if (keyCode == KeyEvent.KEYCODE_DPAD_UP)
+			{
+				dy = dy + newMove;
+			}
+			if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+			{
+				dy = dy - newMove;
+			}
+			setFacing();
 		}
-		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
+		else
 		{
-			dx = dx + newMove;
+			dx = 0;
+			dy = 0;
 		}
-		if (keyCode == KeyEvent.KEYCODE_DPAD_UP)
-		{
-			dy = dy + newMove;
-		}
-		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
-		{
-			dy = dy - newMove;
-		}
-		setFacing();
 	}
 
 	public void update(Landscape landscape)
