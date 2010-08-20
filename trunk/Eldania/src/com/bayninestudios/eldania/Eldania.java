@@ -132,10 +132,12 @@ class ClearGLSurfaceView extends GLSurfaceView
             	{
             		mRenderer.toggleTextures();
             	} 
+            	// + button
             	else if (keyCode == KeyEvent.KEYCODE_P)
             	{
             		mRenderer.zoom(true);
             	} 
+            	// - button
             	else if (keyCode == KeyEvent.KEYCODE_M)
             	{
             		mRenderer.zoom(false);
@@ -157,7 +159,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
     private DrawModel mNPC;
 
     private float mCameraX = 0f;
-    private float zoom = 1.0f;
+    private float zoom = 1.25f;
 	private float mCameraY = -8f*zoom;
 	private float mCameraZ = 12f*zoom;
 
@@ -242,6 +244,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
         
         mLandscape.loadTextures(gl, mContext);
+        mPlayer.loadTextures(gl, mContext);
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h)

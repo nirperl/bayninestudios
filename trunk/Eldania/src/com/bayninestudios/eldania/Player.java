@@ -31,6 +31,11 @@ public class Player
 		healthBar = new DrawModel(context, R.xml.tile);
 	}
 
+	public void loadTextures(GL10 gl, Context context)
+	{
+		playerModel.loadTexture(gl, context, R.drawable.sand);
+	}
+
 	public void draw(GL10 gl)
 	{
         gl.glColor4f(.1f, .1f, 1f, 1f);
