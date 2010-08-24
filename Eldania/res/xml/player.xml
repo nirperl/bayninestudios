@@ -8,24 +8,24 @@
          <geometry vertexcount="4">
             <vertexbuffer positions="true" normals="true" colours_diffuse="false"  >
                <vertex>
-                  <position x="-.25" y="0.0" z="0.0" />
+                  <position x="-.4" y="0.0" z="0.0" />
                   <normal x="0.0" y="0.0" z="0.0" />
-                  <texcoord u="0.0" v="1.0"/>
+                  <texcoord u="0.33" v=".75"/>
                </vertex>
                <vertex>
-                  <position x="-.25" y="0.0" z="1.0" />
+                  <position x="-.4" y="0.0" z="1.5" />
                   <normal x="0.0" y="0.0" z="0.0" />
-                  <texcoord u="0.0" v="0.0"/>
+                  <texcoord u="0.33" v="0.5"/>
                </vertex>
                <vertex>
-                  <position x=".25" y="0.0" z="0.0" />
+                  <position x=".4" y="0.0" z="0.0" />
                   <normal x="0.0" y="0.0" z="0.0" />
-                  <texcoord u="1.0" v="1.0"/>
+                  <texcoord u="0.66" v=".75"/>
                </vertex>
                <vertex>
-                  <position x=".25" y="0.0" z="1.0" />
+                  <position x=".4" y="0.0" z="1.5" />
                   <normal x="0.0" y="0.0" z="0.0" />
-                  <texcoord u="1.0" v="0.0"/>
+                  <texcoord u=".66" v="0.5"/>
                </vertex>
             </vertexbuffer>
          </geometry>

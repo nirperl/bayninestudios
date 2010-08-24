@@ -1,5 +1,8 @@
 package com.bayninestudios.eldania;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -156,10 +159,12 @@ class ClearRenderer implements GLSurfaceView.Renderer
     private Landscape mLandscape;
     private Speedo mSpeedo;
     private Player mPlayer;
-    private DrawModel mNPC;
+    private ArrayList<Enemy> enemies;
+    private DrawModel house;
+    private DrawModel tombstone;
 
     private float mCameraX = 0f;
-    private float zoom = 1.25f;
+    private float zoom = 1.0f;
 	private float mCameraY = -8f*zoom;
 	private float mCameraZ = 12f*zoom;
 
@@ -169,7 +174,32 @@ class ClearRenderer implements GLSurfaceView.Renderer
 		mLandscape = new Landscape(context);
 		mSpeedo = new Speedo();
 		mPlayer = new Player(context);
-		mNPC = new DrawModel(context, R.xml.player);
+		enemies = new ArrayList<Enemy>();
+		house = new DrawModel(context, R.xml.house);
+		tombstone = new DrawModel(context, R.xml.tombstone);
+		addEnemies();
+	}
+
+	private void addEnemy(float x, float y, float s, int f, int tex)
+	{
+		Enemy orc = new Enemy(mContext);
+		orc.textureResource = tex;
+		orc.setLocation(x, y, 0f);
+		orc.setSpeed(s, f);
+		enemies.add(orc);
+	}
+
+	public void addEnemies()
+	{
+		addEnemy(50.5f, 11.5f, .1f, 500, R.drawable.orc);
+		addEnemy(51.5f, 10f, .2f, 200, R.drawable.orc);
+		addEnemy(48.5f, 10f, .1f, 450, R.drawable.skeleton);
+		addEnemy(46.5f, 9.5f, .15f, 400, R.drawable.skeleton);
+
+		addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.orc);
+		addEnemy(51.5f, 10f, .2f, 350, R.drawable.orc);
+		addEnemy(48.5f, 10f, .1f, 500, R.drawable.skeleton);
+		addEnemy(46.5f, 9.5f, .2f, 350, R.drawable.skeleton);
 	}
 
 	public void toggleTextures()
@@ -242,9 +272,25 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
         		GL10.GL_REPLACE);
 
+        gl.glEnable(GL10.GL_DEPTH_TEST);
+
+        // alpha blending
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+        gl.glAlphaFunc(GL10.GL_GREATER, 0.5f);
+        gl.glEnable(GL10.GL_ALPHA_TEST);
+
         
         mLandscape.loadTextures(gl, mContext);
         mPlayer.loadTextures(gl, mContext);
+        house.loadTexture(gl, mContext, R.drawable.stone);
+        tombstone.loadTexture(gl, mContext, R.drawable.tombstone);
+        Iterator<Enemy> iter = enemies.iterator();
+        while (iter.hasNext())
+        {
+        	Enemy current = iter.next();
+        	current.loadTextures(gl, mContext);
+        }
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h)
@@ -267,11 +313,18 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glTranslatef(-mPlayer.x, -mPlayer.y, -mPlayer.z);
         mLandscape.draw(gl, mPlayer.x, mPlayer.y);
 
-        // draw NPC
-        if (mPlayer.inCombat)
-        	gl.glColor4f(1f, .3f, .3f, 1f);
-        else gl.glColor4f(1f, 1f, 0f, 1f);
-        mNPC.draw(gl, 50.5f, 12.5f, 0f);
+        Iterator<Enemy> iter = enemies.iterator();
+        while (iter.hasNext())
+        {
+        	Enemy current = iter.next();
+        	current.draw(gl);
+        	current.update(mLandscape);
+        }
+        house.draw(gl, 47f, 13f, 0f, 0f, 1.75f);
+        gl.glColor4f(.5f, .5f, .5f, 1f);
+        tombstone.draw(gl, 48.5f, 10f, 0f);
+        tombstone.draw(gl, 47.7f, 10.3f, 0f);
+        tombstone.draw(gl, 47.0f, 9.9f, 0f);
 
         gl.glPopMatrix();
 
