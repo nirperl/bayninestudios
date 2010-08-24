@@ -171,6 +171,87 @@ public class DrawModel
 		gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR );
 	}
 
+	public void specialTex()
+	{
+		float[] tcoords = {
+				// column 1
+        		0.0f, 0.25f,
+        		0.0f, 0.0f,
+        		0.33f, 0.25f,
+        		0.33f, 0.0f,
+
+        		0.00f, 0.5f,
+        		0.00f, 0.25f,
+        		0.33f, 0.5f,
+        		0.33f, 0.25f,
+
+        		0.0f, 0.75f,
+        		0.0f, 0.5f,
+        		0.33f, 0.75f,
+        		0.33f, 0.5f,
+
+        		0.0f, 1.0f,
+        		0.0f, 0.75f,
+        		0.33f, 1.0f,
+        		0.33f, 0.75f,
+
+        		// column 2
+        		0.33f, 0.25f,
+        		0.33f, 0.0f,
+        		0.66f, 0.25f,
+        		0.66f, 0.0f,
+
+        		0.33f, 0.5f,
+        		0.33f, 0.25f,
+        		0.66f, 0.5f,
+        		0.66f, 0.25f,
+
+        		0.33f, 0.75f,
+        		0.33f, 0.5f,
+        		0.66f, 0.75f,
+        		0.66f, 0.5f,
+
+        		0.33f, 1.0f,
+        		0.33f, 0.75f,
+        		0.66f, 1.0f,
+        		0.66f, 0.75f,
+
+        		// column 3
+        		0.66f, 0.25f,
+        		0.66f, 0.0f,
+        		1.0f, 0.25f,
+        		1.0f, 0.0f,
+
+        		0.66f, 0.5f,
+        		0.66f, 0.25f,
+        		1.0f, 0.5f,
+        		1.0f, 0.25f,
+
+        		0.66f, 0.75f,
+        		0.66f, 0.5f,
+        		1.0f, 0.75f,
+        		1.0f, 0.5f,
+
+        		0.66f, 1.0f,
+        		0.66f, 0.75f,
+        		1.0f, 1.0f,
+        		1.0f, 0.75f
+		};
+		mTexBuffer = makeFloatBuffer(tcoords);
+	}
+
+	public void specialDraw(GL10 gl, int facing)
+	{
+	    mTexBuffer.position(facing);
+	    draw(gl);
+	}
+
+	public void specialDraw(GL10 gl, int facing, Vector3 pos)
+	{
+	    mTexBuffer.position(facing);
+	    draw(gl, pos.x, pos.y, pos.z);
+	}
+
 	public void draw(GL10 gl)
 	{
 		if (hasTexture)

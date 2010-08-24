@@ -6,41 +6,63 @@ import android.content.Context;
 import android.util.Log;
 import android.view.KeyEvent;
 
-public class Player
+public class Enemy
 {
 	private DrawModel playerModel;
 	public int facing = 32;
-	public Vector2 position;
-	public float x,y,z;
-	public float dx,dy;
+	public Vector3 position;
+//	public float x,y,z;
+	public float dx;
+	public float dy;
 	public boolean inCombat = false;
-	private float MOVESPEED = 1.3f; // in tiles per second
+	private float MOVESPEED = .10f; // in tiles per second
 	public int maxHealth = 30;
 	public int curHealth = 10;
 	private DrawModel healthBar;
 	public long healProcTimer = 0;  // in milliseconds
 	private long walkFrameTimer = 0;
 	private int walkFrame = 1;
-	private final int WALKFRAMESPEED = 250;
-	private final int HEALPROCINTERVAL = 1000;
-	private boolean moving = false;
+	private int WALKFRAMESPEED = 500;
+	private int HEALPROCINTERVAL = 1000;
+	private PatrolComponent patrol;
+	
+	public int textureResource;
+	
+	private int action = 0;
 	
 	private long lastUpdate;
 	
-	public Player(Context context)
+	public Enemy(Context context)
 	{
 		playerModel = new DrawModel(context, R.xml.player);
-		this.x = 49.5f;
-		this.y = 10f;
-		this.z = 0f;
+		this.position = new Vector3();
+		setLocation(50.5f, 11.5f, 0f);
 		lastUpdate = System.currentTimeMillis();
 		healthBar = new DrawModel(context, R.xml.tile);
 	}
 
 	public void loadTextures(GL10 gl, Context context)
 	{
-		playerModel.loadTexture(gl, context, R.drawable.link);
+		if (textureResource == 0)
+			playerModel.loadTexture(gl, context, R.drawable.orc);
+		else playerModel.loadTexture(gl, context, textureResource);
+			
 		playerModel.specialTex();
+	}
+
+	public void setLocation(float x, float y, float z)
+	{
+		position.x = x;
+		position.y = y;
+		position.z = z;
+		patrol = new PatrolComponent(position.x, position.y);
+		patrol.newPatrolDestination(position.x, position.y, position.z);
+	}
+
+	public void setSpeed(float speed, int frameSpeed)
+	{
+		MOVESPEED = speed;
+		WALKFRAMESPEED = frameSpeed;
 	}
 
 	public void draw(GL10 gl)
@@ -56,10 +78,9 @@ public class Player
 		{
 			frameFacing = frameFacing + 32;
 		}
-		playerModel.specialDraw(gl, frameFacing);
+		playerModel.specialDraw(gl, frameFacing, position);
 	}
 
-	// TODO need to remove dashboard code from character class
 	public void drawDash(GL10 gl)
 	{
 		Vector3 barScale = new Vector3();
@@ -67,13 +88,13 @@ public class Player
 		barScale.y = 0.1f;
 		barScale.z = 1f;
 		gl.glColor4f(.2f, .2f, .2f, 1f);
-		healthBar.draw(gl, -4.7f, 2.6f, 0f, 0f, barScale);
+		healthBar.draw(gl, 4.2f, 2.6f, 0f, 0f, barScale);
 
 		barScale.x = ((float)curHealth)/maxHealth;
 		barScale.y = 0.1f;
 		barScale.z = 1f;
 		gl.glColor4f(.8f, 0f, 0f, 1f);
-		healthBar.draw(gl, -4.7f, 2.6f, 0.1f, 0f, barScale);
+		healthBar.draw(gl, 4.2f, 2.6f, 0f, 0f, barScale);
 	}
 
 	public void setFacing()
@@ -86,80 +107,71 @@ public class Player
 			facing = 48;
 		else if ((dx == 0) && (dy > 0))
 			facing = 32;
-		// TODO: I need to do something with these diagonal moves
-//		else if ((charDX > 0) && (charDY > 0))
-//			facing = 135f;
-//		else if ((charDX > 0) && (charDY < 0))
-//			facing = 45f;
-//		else if ((charDX < 0) && (charDY > 0))
-//			facing = -135f;
-//		else if ((charDX < 0) && (charDY < 0))
-//			facing = -45f;
 	}
 
-	public void moveCharacter(int keyCode, boolean keyUp)
+	public void setFacing(Vector3 direction)
 	{
-		if (!inCombat)
+		// TODO: there is an easier way and it's using tan or
+		// some other trig, bah, not now
+		float diff = direction.x / direction.y;
+		if (diff >= 0f)
 		{
-			float newMove = 1f;
-			if (keyUp)
-				newMove = newMove * -1f;
-			if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
+			if (direction.x > 0)
 			{
-				dx = dx - newMove;
+				if (diff > 1.0f)
+					facing = 40;
+				else
+					facing = 32;
 			}
-			if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
+			else
 			{
-				dx = dx + newMove;
+				if (diff > 1.0f)
+					facing = 56;
+				else
+					facing = 48;
 			}
-			if (keyCode == KeyEvent.KEYCODE_DPAD_UP)
-			{
-				dy = dy + newMove;
-			}
-			if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
-			{
-				dy = dy - newMove;
-			}
-			setFacing();
 		}
 		else
 		{
-			dx = 0;
-			dy = 0;
+			if (direction.x > 0)
+			{
+				if (diff < -1.0f)
+					facing = 40;
+				else
+					facing = 48;
+			}
+			else
+			{
+				if (diff < -1.0f)
+					facing = 56;
+				else
+					facing = 32;
+			}			
 		}
 	}
 
 	public void update(Landscape landscape)
 	{
+		facing = 48;
 		long curTime = System.currentTimeMillis();
 		long timeDif = curTime - lastUpdate;
 		float frameRate = timeDif/1000f;
-		if ((dx == 0) && (dy == 0))
+		if (!patrol.isAtDestination(position))
 		{
-			walkFrame = 1;
-			walkFrameTimer = 0;
-			moving = false;
-		}
-		else
-		{
-			if (moving == false)
-			{
-				moving = true;
-				walkFrame = 0;
-			}
-
+			Vector3 patrolVector = patrol.getPatrolVector();
+			setFacing(patrolVector);
 			float moveSpeed = MOVESPEED * frameRate;
 			// move character
-	        float newCharX = x + dx*moveSpeed;
-	        float newCharY = y + dy*moveSpeed;
-	
-	        if (landscape.checkPassable(newCharX, y))
+	        float newCharX = position.x + patrolVector.x*moveSpeed;
+	        float newCharY = position.y + patrolVector.y*moveSpeed;
+
+	        if (landscape.checkPassable(newCharX, position.y))
 	        {
-	        	x = newCharX;
+	        	position.x = newCharX;
 	        }
-	        if (landscape.checkPassable(x, newCharY))
+	        if (landscape.checkPassable(position.x, newCharY))
 	        {
-	        	y = newCharY;
+	        	position.y = newCharY;
 	        }
 	        
 	        walkFrameTimer = walkFrameTimer + timeDif;
@@ -170,6 +182,10 @@ public class Player
 	        	if (walkFrame > 3)
 	        		walkFrame = 0;
 	        }
+		}
+		else
+		{
+			patrol.newPatrolDestination(position);
 		}
 
 		if (!inCombat)
