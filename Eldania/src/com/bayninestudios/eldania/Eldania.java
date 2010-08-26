@@ -162,6 +162,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
     private ArrayList<Enemy> enemies;
     private DrawModel house;
     private DrawModel tombstone;
+    private CombatSystem combatSystem;
 
     private float mCameraX = 0f;
     private float zoom = 1.0f;
@@ -178,6 +179,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
 		house = new DrawModel(context, R.xml.house);
 		tombstone = new DrawModel(context, R.xml.tombstone);
 		addEnemies();
+		combatSystem = new CombatSystem(mPlayer);
 	}
 
 	private void addEnemy(float x, float y, float s, int f, int tex)
@@ -191,15 +193,15 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
 	public void addEnemies()
 	{
-		addEnemy(50.5f, 11.5f, .1f, 500, R.drawable.orc);
-		addEnemy(51.5f, 10f, .2f, 200, R.drawable.orc);
-		addEnemy(48.5f, 10f, .1f, 450, R.drawable.skeleton);
-		addEnemy(46.5f, 9.5f, .15f, 400, R.drawable.skeleton);
-
 		addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.orc);
-		addEnemy(51.5f, 10f, .2f, 350, R.drawable.orc);
-		addEnemy(48.5f, 10f, .1f, 500, R.drawable.skeleton);
-		addEnemy(46.5f, 9.5f, .2f, 350, R.drawable.skeleton);
+//		addEnemy(51.5f, 10f, .2f, 200, R.drawable.orc);
+		addEnemy(48.0f, 10f, .1f, 450, R.drawable.skeleton);
+//		addEnemy(46.5f, 9.5f, .15f, 400, R.drawable.skeleton);
+//
+//		addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.orc);
+//		addEnemy(51.5f, 10f, .2f, 350, R.drawable.orc);
+//		addEnemy(48.5f, 10f, .1f, 500, R.drawable.skeleton);
+//		addEnemy(46.5f, 9.5f, .2f, 350, R.drawable.skeleton);
 	}
 
 	public void toggleTextures()
@@ -216,35 +218,23 @@ class ClearRenderer implements GLSurfaceView.Renderer
 		else zoom = zoom + 0.1f;
 	}
 
-	public void toggleCombat()
-	{
-		if (mPlayer.inCombat)
-		{
-			mPlayer.inCombat = false;
-		}
-		else
-		{
-			mPlayer.inCombat = true;
-		}
-	}
 	public void playerAction()
 	{
-		float REACH = 0.4f;
-		int newX = (int)mPlayer.x;
-		int newY = (int)mPlayer.y;
-		if (mPlayer.facing == 0f)
-			newY = (int)(mPlayer.y - REACH);
-		else if (mPlayer.facing == 180f)
-			newY = (int)(mPlayer.y + REACH);
-		else if (mPlayer.facing == -90f)
-			newX = (int)(mPlayer.x - REACH);
-		else if (mPlayer.facing == 90f)
-			newX = (int)(mPlayer.x + REACH);
-
-		if ((newY == 12) && (newX == 50))
+		if (combatSystem.combatActive)
 		{
-			toggleCombat();
+			combatSystem.attack();
 		}
+//		float REACH = 0.4f;
+//		int newX = (int)mPlayer.x;
+//		int newY = (int)mPlayer.y;
+//		if (mPlayer.facing == 0f)
+//			newY = (int)(mPlayer.y - REACH);
+//		else if (mPlayer.facing == 180f)
+//			newY = (int)(mPlayer.y + REACH);
+//		else if (mPlayer.facing == -90f)
+//			newX = (int)(mPlayer.x - REACH);
+//		else if (mPlayer.facing == 90f)
+//			newX = (int)(mPlayer.x + REACH);
 	}
 
 	public void stopCharacter(int keyCode)
@@ -280,11 +270,10 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glAlphaFunc(GL10.GL_GREATER, 0.5f);
         gl.glEnable(GL10.GL_ALPHA_TEST);
 
-        
         mLandscape.loadTextures(gl, mContext);
         mPlayer.loadTextures(gl, mContext);
         house.loadTexture(gl, mContext, R.drawable.stone);
-        tombstone.loadTexture(gl, mContext, R.drawable.tombstone);
+        tombstone.loadTexture(gl, mContext, R.drawable.tombstone2);
         Iterator<Enemy> iter = enemies.iterator();
         while (iter.hasNext())
         {
@@ -296,6 +285,34 @@ class ClearRenderer implements GLSurfaceView.Renderer
     public void onSurfaceChanged(GL10 gl, int w, int h)
     {
         gl.glViewport(0, 0, w, h);
+    }
+
+    public boolean isInBox(Vector3 pos1, Vector3 pos2, float rad)
+	{
+		boolean returnVal = false;
+		if ((pos1.x > (pos2.x - rad) && (pos1.x < (pos2.x + rad))))
+		{
+			if ((pos1.y > (pos2.y - rad) && (pos1.y < (pos2.y + rad))))
+			{
+				returnVal = true;
+			}
+		}
+		return(returnVal);
+	}
+
+    public void checkCombat()
+    {
+        Iterator<Enemy> iter = enemies.iterator();
+        while (iter.hasNext())
+        {
+        	Enemy current = iter.next();
+        	float aggro = 0.5f;
+        	Vector3 playVec = new Vector3(mPlayer.x, mPlayer.y, mPlayer.z);
+        	if (isInBox(playVec, current.position, aggro))
+        	{
+        		combatSystem.addEnemy(current);
+        	}
+        }
     }
 
     public void onDrawFrame(GL10 gl)
@@ -317,6 +334,8 @@ class ClearRenderer implements GLSurfaceView.Renderer
         while (iter.hasNext())
         {
         	Enemy current = iter.next();
+        	if (current.dead)
+        		iter.remove();
         	current.draw(gl);
         	current.update(mLandscape);
         }
@@ -332,6 +351,9 @@ class ClearRenderer implements GLSurfaceView.Renderer
         mPlayer.draw(gl);
 
         mPlayer.update(mLandscape);
+        
+        checkCombat();
+        combatSystem.update();
 
         // start drawing the dash board
     	gl.glLoadIdentity();
