@@ -16,13 +16,17 @@ public class Player
 	public boolean inCombat = false;
 	private float MOVESPEED = 1.3f; // in tiles per second
 	public int maxHealth = 30;
-	public int curHealth = 10;
+	public int curHealth = 20;
 	private DrawModel healthBar;
 	public long healProcTimer = 0;  // in milliseconds
 	private long walkFrameTimer = 0;
 	private int walkFrame = 1;
 	private final int WALKFRAMESPEED = 250;
 	private final int HEALPROCINTERVAL = 1000;
+
+	public int actionTimer = 2000;
+	public final int ACTIONINTERVAL = 2000;
+
 	private boolean moving = false;
 	
 	private long lastUpdate;
@@ -74,6 +78,21 @@ public class Player
 		barScale.z = 1f;
 		gl.glColor4f(.8f, 0f, 0f, 1f);
 		healthBar.draw(gl, -4.7f, 2.6f, 0.1f, 0f, barScale);
+
+		if (inCombat)
+		{
+			barScale.x = 1f;
+			barScale.y = 0.1f;
+			barScale.z = 1f;
+			gl.glColor4f(.2f, .2f, .2f, 1f);
+			healthBar.draw(gl, -4.7f, 2.4f, 0f, 0f, barScale);
+	
+			barScale.x = ((float)actionTimer)/ACTIONINTERVAL;
+			barScale.y = 0.1f;
+			barScale.z = 1f;
+			gl.glColor4f(1f, 1f, 1f, 1f);
+			healthBar.draw(gl, -4.7f, 2.4f, 0.1f, 0f, barScale);
+		}
 	}
 
 	public void setFacing()

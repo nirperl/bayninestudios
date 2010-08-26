@@ -11,13 +11,12 @@ public class Enemy
 	private DrawModel playerModel;
 	public int facing = 32;
 	public Vector3 position;
-//	public float x,y,z;
 	public float dx;
 	public float dy;
 	public boolean inCombat = false;
 	private float MOVESPEED = .10f; // in tiles per second
 	public int maxHealth = 30;
-	public int curHealth = 10;
+	public int curHealth = 30;
 	private DrawModel healthBar;
 	public long healProcTimer = 0;  // in milliseconds
 	private long walkFrameTimer = 0;
@@ -25,6 +24,10 @@ public class Enemy
 	private int WALKFRAMESPEED = 500;
 	private int HEALPROCINTERVAL = 1000;
 	private PatrolComponent patrol;
+	public boolean dead = false;
+
+	public int actionTimer = 3000;
+	public final int ACTIONINTERVAL = 3000;
 	
 	public int textureResource;
 	
@@ -156,51 +159,40 @@ public class Enemy
 		long curTime = System.currentTimeMillis();
 		long timeDif = curTime - lastUpdate;
 		float frameRate = timeDif/1000f;
-		if (!patrol.isAtDestination(position))
-		{
-			Vector3 patrolVector = patrol.getPatrolVector();
-			setFacing(patrolVector);
-			float moveSpeed = MOVESPEED * frameRate;
-			// move character
-	        float newCharX = position.x + patrolVector.x*moveSpeed;
-	        float newCharY = position.y + patrolVector.y*moveSpeed;
-
-	        if (landscape.checkPassable(newCharX, position.y))
-	        {
-	        	position.x = newCharX;
-	        }
-	        if (landscape.checkPassable(position.x, newCharY))
-	        {
-	        	position.y = newCharY;
-	        }
-	        
-	        walkFrameTimer = walkFrameTimer + timeDif;
-	        if (walkFrameTimer > WALKFRAMESPEED)
-	        {
-	        	walkFrameTimer = walkFrameTimer - WALKFRAMESPEED;
-	        	walkFrame++;
-	        	if (walkFrame > 3)
-	        		walkFrame = 0;
-	        }
-		}
-		else
-		{
-			patrol.newPatrolDestination(position);
-		}
-
 		if (!inCombat)
-        {
-	        // heal if needed
-	        if (curHealth < maxHealth)
-	        {
-	        	healProcTimer = healProcTimer + timeDif;
-	        	if (healProcTimer > HEALPROCINTERVAL)
-	        	{
-	        		curHealth++;
-	        		healProcTimer = healProcTimer - HEALPROCINTERVAL;
-	        	}
-	        }
-        }
+		{
+			if (!patrol.isAtDestination(position))
+			{
+				Vector3 patrolVector = patrol.getPatrolVector();
+				setFacing(patrolVector);
+				float moveSpeed = MOVESPEED * frameRate;
+				// move character
+		        float newCharX = position.x + patrolVector.x*moveSpeed;
+		        float newCharY = position.y + patrolVector.y*moveSpeed;
+	
+		        if (landscape.checkPassable(newCharX, position.y))
+		        {
+		        	position.x = newCharX;
+		        }
+		        if (landscape.checkPassable(position.x, newCharY))
+		        {
+		        	position.y = newCharY;
+		        }
+		        
+		        walkFrameTimer = walkFrameTimer + timeDif;
+		        if (walkFrameTimer > WALKFRAMESPEED)
+		        {
+		        	walkFrameTimer = walkFrameTimer - WALKFRAMESPEED;
+		        	walkFrame++;
+		        	if (walkFrame > 3)
+		        		walkFrame = 0;
+		        }
+			}
+			else
+			{
+				patrol.newPatrolDestination(position);
+			}
+		}
         lastUpdate = curTime;
 	}
 }
