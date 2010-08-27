@@ -40,9 +40,9 @@ public class GameSystem
 
     public void addEnemies()
     {
-        addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.orc);
-        addEnemy(52.5f, 9f, .2f, 200, R.drawable.demon);
-        addEnemy(48.0f, 10f, .1f, 450, R.drawable.skeleton);
+        addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.demon);
+        addEnemy(51.5f, 9f, .2f, 200, R.drawable.orc);
+        addEnemy(47.5f, 10f, .1f, 450, R.drawable.skeleton);
         // addEnemy(46.5f, 9.5f, .15f, 400, R.drawable.skeleton);
         //
         // addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.orc);
@@ -125,8 +125,6 @@ public class GameSystem
         while (iter.hasNext())
         {
             Enemy current = iter.next();
-            if (current.dead)
-                iter.remove();
             current.draw(gl);
         }
         house.draw(gl, 47f, 13f, 0f, 0f, 1.75f);
@@ -146,6 +144,8 @@ public class GameSystem
         while (iter.hasNext())
         {
             Enemy current = iter.next();
+            if (current.dead)
+                iter.remove();
             if (current.inCombat)
                 current.drawDash(gl);
         }

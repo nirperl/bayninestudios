@@ -47,7 +47,7 @@ public class PatrolComponent
 			patVec.y = dest.y - oldPos.y;
 			patVec.z = dest.z - oldPos.z;
 		}
-		while (patVec.length() < .7f);
+		while (patVec.length() < .5f);
 		patVec.normalize();
 	}
 	
