@@ -91,13 +91,13 @@ public class Enemy
 		barScale.y = 0.1f;
 		barScale.z = 1f;
 		gl.glColor4f(.2f, .2f, .2f, 1f);
-		healthBar.draw(gl, 4.2f, 2.6f, 0f, 0f, barScale);
+		healthBar.draw(gl, 3.2f, 2.6f, 0f, 0f, barScale);
 
 		barScale.x = ((float)curHealth)/maxHealth;
 		barScale.y = 0.1f;
 		barScale.z = 1f;
 		gl.glColor4f(.8f, 0f, 0f, 1f);
-		healthBar.draw(gl, 4.2f, 2.6f, 0f, 0f, barScale);
+		healthBar.draw(gl, 3.2f, 2.6f, 0.1f, 0f, barScale);
 	}
 
 	public void setFacing()
