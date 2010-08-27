@@ -17,17 +17,17 @@ public class GameSystem
     private Landscape mLandscape;
     private Context context;
 
-	public GameSystem(Context context)
-	{
-	    this.context = context;
+    public GameSystem(Context context)
+    {
+        this.context = context;
         mPlayer = new Player(context);
         combatSystem = new CombatSystem(mPlayer);
         mLandscape = new Landscape(context);
-		house = new DrawModel(context, R.xml.house);
-		tombstone = new DrawModel(context, R.xml.tombstone);
+        house = new DrawModel(context, R.xml.house);
+        tombstone = new DrawModel(context, R.xml.tombstone);
         enemies = new ArrayList<Enemy>();
         addEnemies();
-	}
+    }
 
     private void addEnemy(float x, float y, float s, int f, int tex)
     {
@@ -60,7 +60,7 @@ public class GameSystem
     }
 
     public void init(GL10 gl)
-	{
+    {
         mLandscape.loadTextures(gl, context);
         mPlayer.loadTextures(gl, context);
         house.loadTexture(gl, context, R.drawable.stone);
@@ -71,7 +71,7 @@ public class GameSystem
             Enemy current = iter.next();
             current.loadTextures(gl, context);
         }
-	}
+    }
 
     public boolean isInBox(Vector3 pos1, Vector3 pos2, float rad)
     {
@@ -101,8 +101,8 @@ public class GameSystem
         }
     }
 
-	public void update()
-	{
+    public void update()
+    {
         mPlayer.update(mLandscape);
         Iterator<Enemy> iter = enemies.iterator();
         while (iter.hasNext())
@@ -112,12 +112,12 @@ public class GameSystem
                 iter.remove();
             current.update(mLandscape);
         }
-	    checkCombat();
-	    combatSystem.update();
-	}
+        checkCombat();
+        combatSystem.update();
+    }
 
-	public void draw(GL10 gl)
-	{
+    public void draw(GL10 gl)
+    {
         gl.glPushMatrix();
         gl.glTranslatef(-mPlayer.x, -mPlayer.y, -mPlayer.z);
         mLandscape.draw(gl, mPlayer.x, mPlayer.y);
@@ -135,11 +135,11 @@ public class GameSystem
         gl.glPopMatrix();
 
         mPlayer.draw(gl);
-	}
+    }
 
-	public void drawDash(GL10 gl)
-	{
-	    Iterator<Enemy> iter = enemies.iterator();
+    public void drawDash(GL10 gl)
+    {
+        Iterator<Enemy> iter = enemies.iterator();
         mPlayer.drawDash(gl);
         while (iter.hasNext())
         {
@@ -149,9 +149,9 @@ public class GameSystem
             if (current.inCombat)
                 current.drawDash(gl);
         }
-	}
+    }
 
-	public void toggleTextures()
+    public void toggleTextures()
     {
         if (mLandscape.useTextures)
             mLandscape.useTextures = false;
