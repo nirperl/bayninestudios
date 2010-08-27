@@ -164,11 +164,7 @@ class ClearGLSurfaceView extends GLSurfaceView
 class ClearRenderer implements GLSurfaceView.Renderer
 {
     private Context mContext;
-    private Landscape mLandscape;
     private Speedo mSpeedo;
-    private Player mPlayer;
-    private ArrayList<Enemy> enemies;
-    private CombatSystem combatSystem;
     private GameSystem gameSystem;
 
     private float mCameraX = 0f;
@@ -179,43 +175,13 @@ class ClearRenderer implements GLSurfaceView.Renderer
     public ClearRenderer(Context context)
     {
         mContext = context;
-        mLandscape = new Landscape(context);
         mSpeedo = new Speedo();
-        mPlayer = new Player(context);
-        enemies = new ArrayList<Enemy>();
-        addEnemies();
-        combatSystem = new CombatSystem(mPlayer);
         gameSystem = new GameSystem(context);
-    }
-
-    private void addEnemy(float x, float y, float s, int f, int tex)
-    {
-        Enemy orc = new Enemy(mContext);
-        orc.textureResource = tex;
-        orc.setLocation(x, y, 0f);
-        orc.setSpeed(s, f);
-        enemies.add(orc);
-    }
-
-    public void addEnemies()
-    {
-        addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.orc);
-        // addEnemy(51.5f, 10f, .2f, 200, R.drawable.orc);
-        addEnemy(48.0f, 10f, .1f, 450, R.drawable.skeleton);
-        // addEnemy(46.5f, 9.5f, .15f, 400, R.drawable.skeleton);
-        //
-        // addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.orc);
-        // addEnemy(51.5f, 10f, .2f, 350, R.drawable.orc);
-        // addEnemy(48.5f, 10f, .1f, 500, R.drawable.skeleton);
-        // addEnemy(46.5f, 9.5f, .2f, 350, R.drawable.skeleton);
     }
 
     public void toggleTextures()
     {
-        if (mLandscape.useTextures)
-            mLandscape.useTextures = false;
-        else
-            mLandscape.useTextures = true;
+        gameSystem.toggleTextures();
     }
 
     public void zoom(boolean in)
@@ -228,31 +194,17 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
     public void playerAction()
     {
-        if (combatSystem.combatActive)
-        {
-            combatSystem.attack();
-        }
-        // float REACH = 0.4f;
-        // int newX = (int)mPlayer.x;
-        // int newY = (int)mPlayer.y;
-        // if (mPlayer.facing == 0f)
-        // newY = (int)(mPlayer.y - REACH);
-        // else if (mPlayer.facing == 180f)
-        // newY = (int)(mPlayer.y + REACH);
-        // else if (mPlayer.facing == -90f)
-        // newX = (int)(mPlayer.x - REACH);
-        // else if (mPlayer.facing == 90f)
-        // newX = (int)(mPlayer.x + REACH);
+        gameSystem.playerAction();
     }
 
     public void stopCharacter(int keyCode)
     {
-        mPlayer.moveCharacter(keyCode, true);
+        gameSystem.mPlayer.moveCharacter(keyCode, true);
     }
 
     public void moveCharacter(int keyCode)
     {
-        mPlayer.moveCharacter(keyCode, false);
+        gameSystem.mPlayer.moveCharacter(keyCode, false);
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config)
@@ -275,48 +227,12 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glAlphaFunc(GL10.GL_GREATER, 0.5f);
         gl.glEnable(GL10.GL_ALPHA_TEST);
 
-        mLandscape.loadTextures(gl, mContext);
-        mPlayer.loadTextures(gl, mContext);
-        Iterator<Enemy> iter = enemies.iterator();
-        while (iter.hasNext())
-        {
-            Enemy current = iter.next();
-            current.loadTextures(gl, mContext);
-        }
-        gameSystem.init(gl, mContext);
+        gameSystem.init(gl);
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h)
     {
         gl.glViewport(0, 0, w, h);
-    }
-
-    public boolean isInBox(Vector3 pos1, Vector3 pos2, float rad)
-    {
-        boolean returnVal = false;
-        if ((pos1.x > (pos2.x - rad) && (pos1.x < (pos2.x + rad))))
-        {
-            if ((pos1.y > (pos2.y - rad) && (pos1.y < (pos2.y + rad))))
-            {
-                returnVal = true;
-            }
-        }
-        return (returnVal);
-    }
-
-    public void checkCombat()
-    {
-        Iterator<Enemy> iter = enemies.iterator();
-        while (iter.hasNext())
-        {
-            Enemy current = iter.next();
-            float aggro = 0.5f;
-            Vector3 playVec = new Vector3(mPlayer.x, mPlayer.y, mPlayer.z);
-            if (isInBox(playVec, current.position, aggro))
-            {
-                combatSystem.addEnemy(current);
-            }
-        }
     }
 
     public void onDrawFrame(GL10 gl)
@@ -330,46 +246,14 @@ class ClearRenderer implements GLSurfaceView.Renderer
         gl.glClearColor(0f, 0f, 0f, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        gl.glPushMatrix();
-        gl.glTranslatef(-mPlayer.x, -mPlayer.y, -mPlayer.z);
-        mLandscape.draw(gl, mPlayer.x, mPlayer.y);
-
-        Iterator<Enemy> iter = enemies.iterator();
-        while (iter.hasNext())
-        {
-            Enemy current = iter.next();
-            if (current.dead)
-                iter.remove();
-            current.draw(gl);
-            current.update(mLandscape);
-        }
-
         gameSystem.update();
         gameSystem.draw(gl);
-
-        gl.glPopMatrix();
-
-        // draw player
-        mPlayer.draw(gl);
-
-        mPlayer.update(mLandscape);
-
-        checkCombat();
-        combatSystem.update();
 
         // start drawing the dash board
         gl.glLoadIdentity();
         GLU.gluOrtho2D(gl, -5f, 5f, -3f, 3f);
 
-        iter = enemies.iterator();
-        mPlayer.drawDash(gl);
-        while (iter.hasNext())
-        {
-            Enemy current = iter.next();
-            if (current.inCombat)
-                current.drawDash(gl);
-        }
-
+        gameSystem.drawDash(gl);
         mSpeedo.setEndTime();
         mSpeedo.draw(gl);
 
