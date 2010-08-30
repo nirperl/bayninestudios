@@ -44,25 +44,36 @@
     <tile x="49" y="13" look="2" passable="1" interact="0"/>
     <tile x="49" y="14" look="2" passable="1" interact="0"/>
 
-    <tile x="45" y="8" look="4" passable="1" interact="0"/>
-    <tile x="46" y="8" look="4" passable="1" interact="0"/>
-    <tile x="47" y="8" look="4" passable="1" interact="0"/>
-    <tile x="48" y="8" look="4" passable="1" interact="0"/>
-    <tile x="49" y="8" look="4" passable="1" interact="0"/>
-    <tile x="50" y="8" look="4" passable="1" interact="0"/>
-    <tile x="51" y="8" look="4" passable="1" interact="0"/>
-    <tile x="52" y="8" look="4" passable="1" interact="0"/>
-    <tile x="53" y="8" look="4" passable="1" interact="0"/>
-    <tile x="54" y="8" look="4" passable="1" interact="0"/>
+    <tile x="45" y="8" look="5" passable="1" interact="0"/>
+    <tile x="46" y="8" look="5" passable="1" interact="0"/>
+    <tile x="47" y="8" look="5" passable="1" interact="0"/>
+    <tile x="48" y="8" look="5" passable="1" interact="0"/>
+    <tile x="49" y="8" look="5" passable="1" interact="0"/>
+    <tile x="50" y="8" look="5" passable="1" interact="0"/>
+    <tile x="51" y="8" look="5" passable="1" interact="0"/>
+    <tile x="52" y="8" look="5" passable="1" interact="0"/>
+    <tile x="53" y="8" look="5" passable="1" interact="0"/>
+    <tile x="54" y="8" look="5" passable="1" interact="0"/>
 
-    <tile x="45" y="7" look="3" passable="1" interact="0"/>
-    <tile x="46" y="7" look="3" passable="1" interact="0"/>
-    <tile x="47" y="7" look="3" passable="1" interact="0"/>
-    <tile x="48" y="7" look="3" passable="1" interact="0"/>
-    <tile x="49" y="7" look="3" passable="1" interact="0"/>
-    <tile x="50" y="7" look="3" passable="1" interact="0"/>
-    <tile x="51" y="7" look="3" passable="1" interact="0"/>
-    <tile x="52" y="7" look="3" passable="1" interact="0"/>
-    <tile x="53" y="7" look="3" passable="1" interact="0"/>
-    <tile x="54" y="7" look="3" passable="1" interact="0"/>
+    <tile x="45" y="7" look="4" passable="1" interact="0"/>
+    <tile x="46" y="7" look="4" passable="1" interact="0"/>
+    <tile x="47" y="7" look="4" passable="1" interact="0"/>
+    <tile x="48" y="7" look="4" passable="1" interact="0"/>
+    <tile x="49" y="7" look="4" passable="1" interact="0"/>
+    <tile x="50" y="7" look="4" passable="1" interact="0"/>
+    <tile x="51" y="7" look="4" passable="1" interact="0"/>
+    <tile x="52" y="7" look="4" passable="1" interact="0"/>
+    <tile x="53" y="7" look="4" passable="1" interact="0"/>
+    <tile x="54" y="7" look="4" passable="1" interact="0"/>
+
+    <tile x="45" y="6" look="3" passable="1" interact="0"/>
+    <tile x="46" y="6" look="3" passable="1" interact="0"/>
+    <tile x="47" y="6" look="3" passable="1" interact="0"/>
+    <tile x="48" y="6" look="3" passable="1" interact="0"/>
+    <tile x="49" y="6" look="3" passable="1" interact="0"/>
+    <tile x="50" y="6" look="3" passable="1" interact="0"/>
+    <tile x="51" y="6" look="3" passable="1" interact="0"/>
+    <tile x="52" y="6" look="3" passable="1" interact="0"/>
+    <tile x="53" y="6" look="3" passable="1" interact="0"/>
+    <tile x="54" y="6" look="3" passable="1" interact="0"/>
 </tiles>
