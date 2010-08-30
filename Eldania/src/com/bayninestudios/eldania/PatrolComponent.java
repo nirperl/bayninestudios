@@ -17,8 +17,8 @@ public class PatrolComponent
         centerX = x;
         centerY = y;
         centerZ = 0f;
-        radiusX = 1.0f;
-        radiusY = 1.0f;
+        radiusX = 1.5f;
+        radiusY = 1.5f;
         radiusZ = 0f;
         dest = new Vector3();
         patVec = new Vector3();

@@ -1,13 +1,11 @@
 package com.bayninestudios.eldania;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
@@ -63,7 +61,7 @@ class ClearGLSurfaceView extends GLSurfaceView
     {
         super(context);
         mActivity = (Activity) context;
-        mRenderer = new ClearRenderer(context);
+        mRenderer = new ClearRenderer(context, mActivity);
         setRenderer(mRenderer);
         setFocusable(true);
         setFocusableInTouchMode(true);
@@ -102,7 +100,7 @@ class ClearGLSurfaceView extends GLSurfaceView
                 {
                     mRenderer.stopCharacter(keyCode);
                 }
-                else if (keyCode == KeyEvent.KEYCODE_BACK)
+                else if (keyCode == KeyEvent.KEYCODE_H)
                 {
                     mActivity.finish();
                 }
@@ -163,25 +161,29 @@ class ClearGLSurfaceView extends GLSurfaceView
 
 class ClearRenderer implements GLSurfaceView.Renderer
 {
-    private Context mContext;
     private Speedo mSpeedo;
     private GameSystem gameSystem;
+    private Context mContext;
+    private Activity mActivity;
 
     private float mCameraX = 0f;
     private float zoom = 1.0f;
     private float mCameraY = -8f * zoom;
     private float mCameraZ = 12f * zoom;
 
-    public ClearRenderer(Context context)
+    public ClearRenderer(Context context, Activity act)
     {
         mContext = context;
         mSpeedo = new Speedo();
+        mActivity = act;
         gameSystem = new GameSystem(context);
     }
 
     public void toggleTextures()
     {
-        gameSystem.toggleTextures();
+        Intent i = new Intent(mActivity, DialogActivity.class);
+        mContext.startActivity(i);
+//        gameSystem.toggleTextures();
     }
 
     public void zoom(boolean in)
@@ -223,8 +225,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
         // alpha blending
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
-        gl.glAlphaFunc(GL10.GL_GREATER, 0.5f);
+        gl.glAlphaFunc(GL10.GL_GREATER, 0.2f);
         gl.glEnable(GL10.GL_ALPHA_TEST);
 
         gameSystem.init(gl);

@@ -6,6 +6,8 @@ import java.util.Iterator;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.content.Intent;
+import android.widget.TextView;
 
 public class GameSystem
 {
@@ -121,6 +123,7 @@ public class GameSystem
         gl.glPushMatrix();
         gl.glTranslatef(-mPlayer.x, -mPlayer.y, -mPlayer.z);
         mLandscape.draw(gl, mPlayer.x, mPlayer.y);
+        gl.glEnable(GL10.GL_ALPHA_TEST);
         Iterator<Enemy> iter = enemies.iterator();
         while (iter.hasNext())
         {
@@ -135,6 +138,12 @@ public class GameSystem
         gl.glPopMatrix();
 
         mPlayer.draw(gl);
+
+        // TODO fix up, just a proof of concept
+//        gl.glPushMatrix();
+//        gl.glTranslatef(-mPlayer.x, -mPlayer.y, -mPlayer.z);
+//        mLandscape.drawFog(gl);
+//        gl.glPopMatrix();
     }
 
     public void drawDash(GL10 gl)
@@ -153,9 +162,11 @@ public class GameSystem
 
     public void toggleTextures()
     {
-        if (mLandscape.useTextures)
-            mLandscape.useTextures = false;
-        else
-            mLandscape.useTextures = true;
+//        if (mLandscape.useTextures)
+//            mLandscape.useTextures = false;
+//        else
+//            mLandscape.useTextures = true;
+//        mLandscape.nextBlend();
+        
     }
 }

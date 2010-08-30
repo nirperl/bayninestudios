@@ -3,6 +3,7 @@ package com.bayninestudios.eldania;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.util.Log;
 
 public class Landscape
 {
@@ -14,6 +15,7 @@ public class Landscape
     private DrawModel sandTile;
     private TileMap map;
     public boolean useTextures;
+    private int blendFactor = GL10.GL_ONE_MINUS_SRC_ALPHA;
 
     private DrawModel fog;
 
@@ -40,13 +42,28 @@ public class Landscape
         fog.loadTexture(gl, context, R.drawable.fog);
     }
 
+    public void nextBlend()
+    {
+        int newBlend = GL10.GL_ZERO;
+        switch (blendFactor)
+        {
+        case GL10.GL_ZERO:                  newBlend = GL10.GL_ONE;break;
+        case GL10.GL_ONE:                   newBlend = GL10.GL_SRC_COLOR;break;
+        case GL10.GL_SRC_COLOR:             newBlend = GL10.GL_ONE_MINUS_SRC_COLOR;break;
+        case GL10.GL_ONE_MINUS_SRC_COLOR:   newBlend = GL10.GL_SRC_ALPHA;break;
+        case GL10.GL_SRC_ALPHA:             newBlend = GL10.GL_ONE_MINUS_SRC_ALPHA;break;
+        case GL10.GL_ONE_MINUS_SRC_ALPHA:   newBlend = GL10.GL_DST_ALPHA;break;
+        case GL10.GL_DST_ALPHA:             newBlend = GL10.GL_ONE_MINUS_DST_ALPHA;break;
+        case GL10.GL_ONE_MINUS_DST_ALPHA:   newBlend = GL10.GL_ZERO;break;
+        default: break;
+        }
+        blendFactor = newBlend;
+        Log.d(">", "new blend");
+
+    }
+
     public void draw(GL10 gl, float charX, float charY)
     {
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_SRC_COLOR);
-        // gl.glAlphaFunc(GL10.GL_GREATER, 0.5f);
-        // gl.glEnable(GL10.GL_ALPHA_TEST);
-        Vector3 fogscale = new Vector3(10f, 10f, 0);
-        fog.draw(gl, 45f, 7f, .5f, 0f, fogscale);
         gl.glColor4f(.5f, .5f, .5f, 1f);
         for (int y = -3; y < 4; y++)
         {
@@ -98,9 +115,20 @@ public class Landscape
             }
         }
     }
+    
+    // TODO: just a proof of concept
+    public void drawFog(GL10 gl)
+    {
+        gl.glEnable(GL10.GL_BLEND);
+//        gl.glDisable(GL10.GL_ALPHA_TEST);
+        Vector3 scaleVec = new Vector3(10f,10f,1f);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, blendFactor);
+        fog.draw(gl, 47f, 8f, 0.2f, 0f, scaleVec);
+    }
 
     public boolean checkPassable(float x, float y)
     {
         return (map.checkPassible((int) x, (int) y));
     }
+    
 }
