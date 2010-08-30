@@ -9,7 +9,7 @@ import android.view.KeyEvent;
 public class Player
 {
     private DrawModel playerModel;
-    public int facing = 32;
+    public int facing = 40;
     public Vector2 position;
     public float x, y, z;
     public float dx, dy;
@@ -35,7 +35,7 @@ public class Player
     {
         playerModel = new DrawModel(context, R.xml.player);
         this.x = 49.5f;
-        this.y = 10f;
+        this.y = 8.5f;
         this.z = 0f;
         lastUpdate = System.currentTimeMillis();
         healthBar = new DrawModel(context, R.xml.tile);
