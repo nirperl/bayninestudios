@@ -225,7 +225,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
         // alpha blending
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        gl.glAlphaFunc(GL10.GL_GREATER, 0.2f);
+        gl.glAlphaFunc(GL10.GL_GREATER, 0.5f);
         gl.glEnable(GL10.GL_ALPHA_TEST);
 
         gameSystem.init(gl);

@@ -13,6 +13,7 @@ public class Landscape
     private DrawModel waterTile;
     private DrawModel beachTile;
     private DrawModel sandTile;
+    private DrawModel sandGrassTile;
     private TileMap map;
     public boolean useTextures;
     private int blendFactor = GL10.GL_ONE_MINUS_SRC_ALPHA;
@@ -27,6 +28,7 @@ public class Landscape
         waterTile = new DrawModel(context, R.xml.tile);
         beachTile = new DrawModel(context, R.xml.tile);
         sandTile = new DrawModel(context, R.xml.tile);
+        sandGrassTile = new DrawModel(context, R.xml.tile);
         map = new TileMap(context, R.xml.map);
         fog = new DrawModel(context, R.xml.tile);
         useTextures = true;
@@ -35,10 +37,11 @@ public class Landscape
     public void loadTextures(GL10 gl, Context context)
     {
         dirtTile.loadTexture(gl, context, R.drawable.dirt12);
-        grassTile.loadTexture(gl, context, R.drawable.acharya_grass3);
+        grassTile.loadTexture(gl, context, R.drawable.seemless_grass_texture);
         waterTile.loadTexture(gl, context, R.drawable.water2);
         beachTile.loadTexture(gl, context, R.drawable.beach);
         sandTile.loadTexture(gl, context, R.drawable.sand);
+        sandGrassTile.loadTexture(gl, context, R.drawable.grassand);
         fog.loadTexture(gl, context, R.drawable.fog);
     }
 
@@ -109,6 +112,14 @@ public class Landscape
                     gl.glColor4f(0.5f, 0.25f, 0.25f, 1f);
                     if (useTextures)
                         sandTile.draw(gl, tileX, tileY, 0f);
+                    else
+                        tile.draw(gl, tileX, tileY, 0f);
+                }
+                else if (tileType == 5)
+                {
+                    gl.glColor4f(0.5f, 0.25f, 0.25f, 1f);
+                    if (useTextures)
+                        sandGrassTile.draw(gl, tileX, tileY, 0f);
                     else
                         tile.draw(gl, tileX, tileY, 0f);
                 }

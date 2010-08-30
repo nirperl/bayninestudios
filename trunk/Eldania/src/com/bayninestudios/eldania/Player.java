@@ -43,7 +43,7 @@ public class Player
 
     public void loadTextures(GL10 gl, Context context)
     {
-        playerModel.loadTexture(gl, context, R.drawable.link);
+        playerModel.loadTexture(gl, context, R.drawable.player);
         playerModel.specialTex();
     }
 
