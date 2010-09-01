@@ -28,10 +28,10 @@ public class Landscape
 
     public void draw(GL10 gl, float charX, float charY)
     {
-        // just draw the 10x10 tiles around the character
-        for (int y = -10; y < 10; y++)
+        // just draw the 12x8 tiles around the character
+        for (int y = -4; y < 4; y++)
         {
-            for (int x = -10; x < 10; x++)
+            for (int x = -6; x < 6; x++)
             {
                 int tileX = x + (int) charX;
                 int tileY = y + (int) charY;
