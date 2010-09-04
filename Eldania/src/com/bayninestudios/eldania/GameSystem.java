@@ -6,9 +6,7 @@ import java.util.Iterator;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-import android.widget.TextView;
 
 public class GameSystem
 {
