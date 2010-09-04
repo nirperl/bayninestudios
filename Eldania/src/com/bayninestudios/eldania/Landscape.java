@@ -37,7 +37,7 @@ public class Landscape
     public void loadTextures(GL10 gl, Context context)
     {
         dirtTile.loadTexture(gl, context, R.drawable.dirt12);
-        grassTile.loadTexture(gl, context, R.drawable.seemless_grass_texture);
+        grassTile.loadTexture(gl, context, R.drawable.acharya_grass3);
         waterTile.loadTexture(gl, context, R.drawable.water2);
         beachTile.loadTexture(gl, context, R.drawable.beach);
         sandTile.loadTexture(gl, context, R.drawable.sand);
@@ -77,11 +77,11 @@ public class Landscape
                 int tileType = map.getTile(tileX, tileY);
                 if (tileType == 0)
                 {
-                    gl.glColor4f(0f, 0f, .7f, 1f);
-                    if (useTextures)
-                        waterTile.draw(gl, tileX, tileY, 0f);
-                    else
-                        tile.draw(gl, tileX, tileY, 0f);
+//                    gl.glColor4f(0f, 0f, .7f, 1f);
+//                    if (useTextures)
+//                        waterTile.draw(gl, tileX, tileY, 0f);
+//                    else
+//                        tile.draw(gl, tileX, tileY, 0f);
                 }
                 else if (tileType == 1)
                 {

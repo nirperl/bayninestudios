@@ -1,5 +1,7 @@
 package com.bayninestudios.eldania;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import android.util.Log;
 
 public class CombatSystem
@@ -23,6 +25,10 @@ public class CombatSystem
         combatActive = true;
         player.dx = 0f;
         player.dy = 0f;
+        Vector3 enemyPos = enemy.position;
+        Vector3 enemyFacing = new Vector3(enemyPos.x, enemyPos.y, enemyPos.z);
+        enemyFacing.subtract(player.position);
+        enemy.setFacing(enemyFacing);
     }
 
     public void update()
@@ -64,5 +70,10 @@ public class CombatSystem
             enemy.curHealth -= 10;
             player.actionTimer = player.ACTIONINTERVAL;
         }
+    }
+    
+    public Vector3 getTarget()
+    {
+        return enemy.position;
     }
 }

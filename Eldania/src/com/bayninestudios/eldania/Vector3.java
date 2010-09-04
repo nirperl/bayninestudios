@@ -36,8 +36,15 @@ public class Vector3
         return magnitude;
     }
 
+    public final void subtract(Vector3 other)
+    {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+    }
+
     public String toString()
     {
-        return (new String(x + "," + y + "," + "z"));
+        return (new String(x + "," + y + "," + "," + z));
     }
 }
