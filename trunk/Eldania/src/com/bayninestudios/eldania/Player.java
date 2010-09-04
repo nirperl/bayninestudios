@@ -10,8 +10,7 @@ public class Player
 {
     private DrawModel playerModel;
     public int facing = 40;
-    public Vector2 position;
-    public float x, y, z;
+    public Vector3 position;
     public float dx, dy;
     public boolean inCombat = false;
     private float MOVESPEED = 1.3f; // in tiles per second
@@ -34,9 +33,7 @@ public class Player
     public Player(Context context)
     {
         playerModel = new DrawModel(context, R.xml.player);
-        this.x = 49.5f;
-        this.y = 8.5f;
-        this.z = 0f;
+        position = new Vector3(49.5f, 8.5f, 0f);
         lastUpdate = System.currentTimeMillis();
         healthBar = new DrawModel(context, R.xml.tile);
     }
@@ -169,16 +166,16 @@ public class Player
 
             float moveSpeed = MOVESPEED * frameRate;
             // move character
-            float newCharX = x + dx * moveSpeed;
-            float newCharY = y + dy * moveSpeed;
+            float newCharX = position.x + dx * moveSpeed;
+            float newCharY = position.y + dy * moveSpeed;
 
-            if (landscape.checkPassable(newCharX, y))
+            if (landscape.checkPassable(newCharX, position.y))
             {
-                x = newCharX;
+                position.x = newCharX;
             }
-            if (landscape.checkPassable(x, newCharY))
+            if (landscape.checkPassable(position.x, newCharY))
             {
-                y = newCharY;
+                position.y = newCharY;
             }
 
             walkFrameTimer = walkFrameTimer + timeDif;

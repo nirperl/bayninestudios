@@ -7,6 +7,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.TextView;
 
 public class GameSystem
@@ -18,6 +19,7 @@ public class GameSystem
     public Player mPlayer;
     private Landscape mLandscape;
     private Context context;
+    private DrawModel waterTile;
 
     public GameSystem(Context context)
     {
@@ -27,6 +29,7 @@ public class GameSystem
         mLandscape = new Landscape(context);
         house = new DrawModel(context, R.xml.house);
         tombstone = new DrawModel(context, R.xml.tombstone);
+        waterTile = new DrawModel(context, R.xml.tile);
         enemies = new ArrayList<Enemy>();
         addEnemies();
     }
@@ -67,6 +70,7 @@ public class GameSystem
         mPlayer.loadTextures(gl, context);
         house.loadTexture(gl, context, R.drawable.stone);
         tombstone.loadTexture(gl, context, R.drawable.tombstone2);
+        waterTile.loadTexture(gl, context, R.drawable.target);
         Iterator<Enemy> iter = enemies.iterator();
         while (iter.hasNext())
         {
@@ -95,7 +99,7 @@ public class GameSystem
         {
             Enemy current = iter.next();
             float aggro = 0.5f;
-            Vector3 playVec = new Vector3(mPlayer.x, mPlayer.y, mPlayer.z);
+            Vector3 playVec = mPlayer.position;
             if (isInBox(playVec, current.position, aggro))
             {
                 combatSystem.addEnemy(current);
@@ -121,9 +125,10 @@ public class GameSystem
     public void draw(GL10 gl)
     {
         gl.glPushMatrix();
-        gl.glTranslatef(-mPlayer.x, -mPlayer.y, -mPlayer.z);
-        mLandscape.draw(gl, mPlayer.x, mPlayer.y);
-        gl.glEnable(GL10.GL_ALPHA_TEST);
+        gl.glTranslatef(-mPlayer.position.x, -mPlayer.position.y, -mPlayer.position.z);
+        mLandscape.draw(gl, mPlayer.position.x, mPlayer.position.y);
+
+        // draw sprites
         Iterator<Enemy> iter = enemies.iterator();
         while (iter.hasNext())
         {
@@ -131,12 +136,17 @@ public class GameSystem
             current.draw(gl);
         }
         house.draw(gl, 47f, 13f, 0f, 0f, 1.75f);
-        gl.glColor4f(.5f, .5f, .5f, 1f);
         tombstone.draw(gl, 48.5f, 10f, 0f);
         tombstone.draw(gl, 47.7f, 10.3f, 0f);
         tombstone.draw(gl, 47.0f, 9.9f, 0f);
-        gl.glPopMatrix();
 
+        if (combatSystem.combatActive)
+        {
+            Log.d("target",combatSystem.getTarget().toString());
+            drawTargetTile(gl, combatSystem.getTarget());
+        }
+
+        gl.glPopMatrix();
         mPlayer.draw(gl);
 
         // TODO fix up, just a proof of concept
@@ -144,6 +154,10 @@ public class GameSystem
 //        gl.glTranslatef(-mPlayer.x, -mPlayer.y, -mPlayer.z);
 //        mLandscape.drawFog(gl);
 //        gl.glPopMatrix();
+    }
+    public void drawTargetTile(GL10 gl, Vector3 target)
+    {
+        waterTile.draw(gl, target.x - 0.5f, target.y - 0.4f, target.z+0.01f);
     }
 
     public void drawDash(GL10 gl)

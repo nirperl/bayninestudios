@@ -157,23 +157,52 @@ public class DrawModel
 
     public void specialTex()
     {
-        float[] tcoords = {
-                // column 1
-                0.0f, 0.25f, 0.0f, 0.0f, 0.33f, 0.25f, 0.33f, 0.0f,
-                0.00f, 0.5f, 0.00f, 0.25f, 0.33f, 0.5f, 0.33f, 0.25f,
-                0.0f, 0.75f, 0.0f, 0.5f, 0.33f, 0.75f, 0.33f, 0.5f,
-                0.0f, 1.0f, 0.0f, 0.75f, 0.33f, 1.0f, 0.33f, 0.75f,
-                // column 2
-                0.33f, 0.25f, 0.33f, 0.0f, 0.66f, 0.25f, 0.66f, 0.0f,
-                0.33f, 0.5f, 0.33f, 0.25f, 0.66f, 0.5f, 0.66f, 0.25f,
-                0.33f, 0.75f, 0.33f, 0.5f, 0.66f, 0.75f, 0.66f, 0.5f,
-                0.33f, 1.0f, 0.33f, 0.75f, 0.66f, 1.0f, 0.66f, 0.75f,
-                // column 3
-                0.66f, 0.25f, 0.66f, 0.0f, 1.0f, 0.25f, 1.0f, 0.0f,
-                0.66f, 0.5f, 0.66f, 0.25f, 1.0f, 0.5f, 1.0f, 0.25f,
-                0.66f, 0.75f, 0.66f, 0.5f, 1.0f, 0.75f, 1.0f, 0.5f,
-                0.66f, 1.0f, 0.66f, 0.75f, 1.0f, 1.0f, 1.0f, 0.75f };
-        mTexBuffer = Util.makeFloatBuffer(tcoords);
+        float fudge = 0.01f;
+        float[] tcoords2 = new float[3*4*4*2];
+        int position = 0;
+        float[] baseCoords = {0.0f, 0.25f, 0.0f, 0.0f, 0.33f, 0.25f, 0.33f, 0.0f};
+        for (int j = 0; j < 3; j++)
+        {
+            for (int k = 0; k < 4; k++)
+            {
+                tcoords2[position++] = baseCoords[0]+(j*.3333333f) + fudge;
+                tcoords2[position++] = baseCoords[1]+(k*.25f);
+
+                tcoords2[position++] = baseCoords[2]+(j*.3333333f) + fudge;
+                tcoords2[position++] = baseCoords[3]+(k*.25f) + fudge;
+
+                tcoords2[position++] = baseCoords[4]+(j*.3333333f) - fudge;
+                tcoords2[position++] = baseCoords[5]+(k*.25f);
+
+                tcoords2[position++] = baseCoords[6]+(j*.3333333f) - fudge;
+                tcoords2[position++] = baseCoords[7]+(k*.25f) + fudge;
+
+//                for (int x = 0; x < 4; x++)
+//                {
+//                    tcoords2[position] = baseCoords[position%8]+(j*.3333333f);
+//                    position++;
+//                    tcoords2[position] = baseCoords[position%8]+(k*.25f);
+//                    position++;
+//                }
+            }
+        }
+//        float[] tcoords = {
+//                // column 1
+//                0.0f, 0.25f, 0.0f, 0.0f, 0.33f, 0.25f, 0.33f, 0.0f,
+//                0.00f, 0.5f, 0.00f, 0.25f, 0.33f, 0.5f, 0.33f, 0.25f,
+//                0.0f, 0.75f, 0.0f, 0.5f, 0.33f, 0.75f, 0.33f, 0.5f,
+//                0.0f, 1.0f, 0.0f, 0.75f, 0.33f, 1.0f, 0.33f, 0.75f,
+//                // column 2
+//                0.33f, 0.25f, 0.33f, 0.0f, 0.66f, 0.25f, 0.66f, 0.0f,
+//                0.33f, 0.5f, 0.33f, 0.25f, 0.66f, 0.5f, 0.66f, 0.25f,
+//                0.33f, 0.75f, 0.33f, 0.5f, 0.66f, 0.75f, 0.66f, 0.5f,
+//                0.33f, 1.0f, 0.33f, 0.75f, 0.66f, 1.0f, 0.66f, 0.75f,
+//                // column 3
+//                0.66f, 0.25f, 0.66f, 0.0f, 1.0f, 0.25f, 1.0f, 0.0f,
+//                0.66f, 0.5f, 0.66f, 0.25f, 1.0f, 0.5f, 1.0f, 0.25f,
+//                0.66f, 0.75f, 0.66f, 0.5f, 1.0f, 0.75f, 1.0f, 0.5f,
+//                0.66f, 1.0f, 0.66f, 0.75f, 1.0f, 1.0f, 1.0f, 0.75f };
+        mTexBuffer = Util.makeFloatBuffer(tcoords2);
     }
 
     public void specialDraw(GL10 gl, int facing)
