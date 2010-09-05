@@ -17,7 +17,7 @@ public class GameSystem
     public Player mPlayer;
     private Landscape mLandscape;
     private Context context;
-    private DrawModel waterTile;
+    private DrawModel targetTile;
 
     public GameSystem(Context context)
     {
@@ -27,7 +27,7 @@ public class GameSystem
         mLandscape = new Landscape(context);
         house = new DrawModel(context, R.xml.house);
         tombstone = new DrawModel(context, R.xml.tombstone);
-        waterTile = new DrawModel(context, R.xml.tile);
+        targetTile = new DrawModel(context, R.xml.tile);
         enemies = new ArrayList<Enemy>();
         addEnemies();
     }
@@ -68,7 +68,7 @@ public class GameSystem
         mPlayer.loadTextures(gl, context);
         house.loadTexture(gl, context, R.drawable.stone);
         tombstone.loadTexture(gl, context, R.drawable.tombstone2);
-        waterTile.loadTexture(gl, context, R.drawable.target);
+        targetTile.loadTexture(gl, context, R.drawable.target);
         Iterator<Enemy> iter = enemies.iterator();
         while (iter.hasNext())
         {
@@ -96,7 +96,7 @@ public class GameSystem
         while (iter.hasNext())
         {
             Enemy current = iter.next();
-            float aggro = 0.5f;
+            float aggro = 0.7f;
             Vector3 playVec = mPlayer.position;
             if (isInBox(playVec, current.position, aggro))
             {
@@ -140,7 +140,6 @@ public class GameSystem
 
         if (combatSystem.combatActive)
         {
-            Log.d("target",combatSystem.getTarget().toString());
             drawTargetTile(gl, combatSystem.getTarget());
         }
 
@@ -153,9 +152,12 @@ public class GameSystem
 //        mLandscape.drawFog(gl);
 //        gl.glPopMatrix();
     }
+
     public void drawTargetTile(GL10 gl, Vector3 target)
     {
-        waterTile.draw(gl, target.x - 0.5f, target.y - 0.4f, target.z+0.01f);
+        gl.glEnable(GL10.GL_BLEND);
+        targetTile.draw(gl, target.x - 0.5f, target.y - 0.4f, target.z+0.01f);
+        gl.glDisable(GL10.GL_BLEND);
     }
 
     public void drawDash(GL10 gl)
