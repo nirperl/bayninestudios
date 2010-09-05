@@ -22,7 +22,6 @@ public class Enemy
     private long walkFrameTimer = 0;
     private int walkFrame = 1;
     private int WALKFRAMESPEED = 500;
-    private int HEALPROCINTERVAL = 1000;
     private PatrolComponent patrol;
     public boolean dead = false;
 
@@ -30,8 +29,6 @@ public class Enemy
     public final int ACTIONINTERVAL = 3000;
 
     public int textureResource;
-
-    private int action = 0;
 
     private long lastUpdate;
 

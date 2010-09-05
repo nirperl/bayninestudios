@@ -31,30 +31,8 @@ public class Speedo
 
         short[] icoords = { 0, 1, 2 };
 
-        mFVertexBuffer = makeFloatBuffer(coords);
-        mIndexBuffer = makeShortBuffer(icoords);
-    }
-
-    // used to make native order float buffers
-    private FloatBuffer makeFloatBuffer(float[] arr)
-    {
-        ByteBuffer bb = ByteBuffer.allocateDirect(arr.length * 4);
-        bb.order(ByteOrder.nativeOrder());
-        FloatBuffer fb = bb.asFloatBuffer();
-        fb.put(arr);
-        fb.position(0);
-        return fb;
-    }
-
-    // used to make native order short buffers
-    private ShortBuffer makeShortBuffer(short[] arr)
-    {
-        ByteBuffer bb = ByteBuffer.allocateDirect(arr.length * 4);
-        bb.order(ByteOrder.nativeOrder());
-        ShortBuffer ib = bb.asShortBuffer();
-        ib.put(arr);
-        ib.position(0);
-        return ib;
+        mFVertexBuffer = Util.makeFloatBuffer(coords);
+        mIndexBuffer = Util.makeShortBuffer(icoords);
     }
 
     public void draw(GL10 gl)
