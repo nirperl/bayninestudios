@@ -30,6 +30,8 @@ public class CombatSystem
         enemyFacing.subtract(enemy.position);
         enemyFacing.normalize();
         enemy.setFacing(enemyFacing);
+        enemyFacing.multiply(-1f);
+        player.setFacing(enemyFacing);
     }
 
     public void update()
