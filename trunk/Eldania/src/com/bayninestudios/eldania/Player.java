@@ -63,30 +63,21 @@ public class Player
     // TODO need to remove dashboard code from character class
     public void drawDash(GL10 gl)
     {
-        Vector3 barScale = new Vector3();
-        barScale.x = 1f;
-        barScale.y = 0.1f;
-        barScale.z = 1f;
+        Vector3 barScale = new Vector3(1f, 0.1f, 1f);
         gl.glColor4f(.2f, .2f, .2f, 1f);
         healthBar.draw(gl, -4.7f, 2.6f, 0f, 0f, barScale);
 
-        barScale.x = ((float) curHealth) / maxHealth;
-        barScale.y = 0.1f;
-        barScale.z = 1f;
+        barScale.setxyz(((float) curHealth) / maxHealth, 0.1f, 1f);
         gl.glColor4f(.8f, 0f, 0f, 1f);
         healthBar.draw(gl, -4.7f, 2.6f, 0.1f, 0f, barScale);
 
         if (inCombat)
         {
-            barScale.x = 1f;
-            barScale.y = 0.1f;
-            barScale.z = 1f;
+            barScale.setxyz(1f, 0.1f, 1f);
             gl.glColor4f(.2f, .2f, .2f, 1f);
             healthBar.draw(gl, -4.7f, 2.4f, 0f, 0f, barScale);
 
-            barScale.x = ((float) actionTimer) / ACTIONINTERVAL;
-            barScale.y = 0.1f;
-            barScale.z = 1f;
+            barScale.setxyz(((float) actionTimer) / ACTIONINTERVAL, 0.1f, 1f);
             gl.glColor4f(1f, 1f, 1f, 1f);
             healthBar.draw(gl, -4.7f, 2.4f, 0.1f, 0f, barScale);
         }
@@ -111,6 +102,47 @@ public class Player
         // facing = -135f;
         // else if ((charDX < 0) && (charDY < 0))
         // facing = -45f;
+    }
+
+    public void setFacing(Vector3 direction)
+    {
+        // TODO: there is an easier way and it's using tan or
+        // some other trig, bah, not now
+        float diff = direction.x / direction.y;
+        if (diff >= 0f)
+        {
+            if (direction.x > 0)
+            {
+                if (diff > 1.0f)
+                    facing = 40;
+                else
+                    facing = 32;
+            }
+            else
+            {
+                if (diff > 1.0f)
+                    facing = 56;
+                else
+                    facing = 48;
+            }
+        }
+        else
+        {
+            if (direction.x > 0)
+            {
+                if (diff < -1.0f)
+                    facing = 40;
+                else
+                    facing = 48;
+            }
+            else
+            {
+                if (diff < -1.0f)
+                    facing = 56;
+                else
+                    facing = 32;
+            }
+        }
     }
 
     public void moveCharacter(int keyCode, boolean keyUp)

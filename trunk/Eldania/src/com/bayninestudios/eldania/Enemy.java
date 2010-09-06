@@ -68,8 +68,6 @@ public class Enemy
 
     public void draw(GL10 gl)
     {
-        // gl.glColor4f(.1f, .1f, 1f, 1f);
-        // playerModel.draw(gl,0f,0f,0f,facing);
         int frameFacing = facing;
         if (walkFrame == 0)
         {
@@ -84,16 +82,11 @@ public class Enemy
 
     public void drawDash(GL10 gl)
     {
-        Vector3 barScale = new Vector3();
-        barScale.x = 1f;
-        barScale.y = 0.1f;
-        barScale.z = 1f;
+        Vector3 barScale = new Vector3(1f, 0.1f, 1f);
         gl.glColor4f(.2f, .2f, .2f, 1f);
         healthBar.draw(gl, 3.2f, 2.6f, 0f, 0f, barScale);
 
-        barScale.x = ((float) curHealth) / maxHealth;
-        barScale.y = 0.1f;
-        barScale.z = 1f;
+        barScale.setxyz(((float) curHealth) / maxHealth, 0.1f, 1f);
         gl.glColor4f(.8f, 0f, 0f, 1f);
         healthBar.draw(gl, 3.2f, 2.6f, 0.1f, 0f, barScale);
     }

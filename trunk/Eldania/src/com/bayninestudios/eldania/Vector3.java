@@ -18,6 +18,13 @@ public class Vector3
         this.z = z;
     }
 
+    public void setxyz(float x, float y, float z)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;        
+    }
+
     public final float length()
     {
         return (float) Math.sqrt((x * x) + (y * y) + (z * z));
@@ -41,6 +48,13 @@ public class Vector3
         x -= other.x;
         y -= other.y;
         z -= other.z;
+    }
+
+    public final void multiply(float factor)
+    {
+        x *= factor;
+        y *= factor;
+        z *= factor;
     }
 
     public String toString()
