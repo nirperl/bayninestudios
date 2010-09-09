@@ -48,11 +48,11 @@ public class CombatSystem
                 this.combatActive = false;
                 player.inCombat = false;
             }
-            player.actionTimer -= timeDif;
-            if (player.actionTimer < 0)
-                player.actionTimer = 0;
-            enemy.actionTimer -= timeDif;
-            if (enemy.actionTimer < 0)
+            player.actionTimer += timeDif;
+            if (player.actionTimer > player.ACTIONINTERVAL)
+                player.actionTimer = player.ACTIONINTERVAL;
+            enemy.actionTimer += timeDif;
+            if (enemy.actionTimer > enemy.ACTIONINTERVAL)
                 enemyAttack();
         }
         lastUpdate = curTime;
@@ -63,15 +63,15 @@ public class CombatSystem
         player.curHealth -= 3;
         if (player.curHealth < 0)
             player.curHealth = 0;
-        enemy.actionTimer = enemy.ACTIONINTERVAL;
+        enemy.actionTimer = 0;
     }
 
     public void attack()
     {
-        if (player.actionTimer == 0)
+        if (player.actionTimer == player.ACTIONINTERVAL)
         {
             enemy.curHealth -= 10;
-            player.actionTimer = player.ACTIONINTERVAL;
+            player.actionTimer = 0;
         }
     }
     

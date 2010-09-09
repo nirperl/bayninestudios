@@ -138,7 +138,6 @@ class ClearGLSurfaceView extends GLSurfaceView
                 }
                 else if (keyCode == KeyEvent.KEYCODE_1)
                 {
-                    mRenderer.toggleTextures();
                 }
                 // + button
                 else if (keyCode == KeyEvent.KEYCODE_P)
@@ -163,8 +162,6 @@ class ClearRenderer implements GLSurfaceView.Renderer
 {
     private Speedo mSpeedo;
     private GameSystem gameSystem;
-    private Context mContext;
-    private Activity mActivity;
 
     private float mCameraX = 0f;
     private float zoom = 1.0f;
@@ -173,17 +170,8 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
     public ClearRenderer(Context context, Activity act)
     {
-        mContext = context;
         mSpeedo = new Speedo();
-        mActivity = act;
         gameSystem = new GameSystem(context);
-    }
-
-    public void toggleTextures()
-    {
-        Intent i = new Intent(mActivity, DialogActivity.class);
-        mContext.startActivity(i);
-//        gameSystem.toggleTextures();
     }
 
     public void zoom(boolean in)

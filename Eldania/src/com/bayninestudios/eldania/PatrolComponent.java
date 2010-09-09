@@ -47,7 +47,7 @@ public class PatrolComponent
             patVec.y = dest.y - oldPos.y;
             patVec.z = dest.z - oldPos.z;
         }
-        while (patVec.length() < .5f);
+        while (patVec.length() < .2f);
         patVec.normalize();
     }
 
@@ -60,7 +60,7 @@ public class PatrolComponent
 
     public boolean isAtDestination(Vector3 pos)
     {
-        float fudge = .2f;
+        float fudge = .1f;
         boolean returnVal = false;
         if ((pos.x > (dest.x - fudge) && (pos.x < (dest.x + fudge))))
         {
