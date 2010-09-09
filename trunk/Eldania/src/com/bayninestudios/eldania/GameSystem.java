@@ -34,23 +34,24 @@ public class GameSystem
 
     private void addEnemy(float x, float y, float s, int f, int tex)
     {
-        Enemy orc = new Enemy(context);
-        orc.textureResource = tex;
-        orc.setLocation(x, y, 0f);
-        orc.setSpeed(s, f);
-        enemies.add(orc);
+        Enemy enemy = new Enemy(context);
+        enemy.textureResource = tex;
+        enemy.setLocation(x, y, 0f);
+        enemy.setSpeed(s, f);
+        enemies.add(enemy);
     }
 
     public void addEnemies()
     {
-        addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.demon);
         addEnemy(51.5f, 9f, .2f, 200, R.drawable.orc);
-        addEnemy(47.5f, 10f, .1f, 450, R.drawable.skeleton);
-        // addEnemy(46.5f, 9.5f, .15f, 400, R.drawable.skeleton);
+        addEnemy(49.5f, 20.5f, 0.15f, 450, R.drawable.skeleton);
+        addEnemy(49.5f, 20.5f, 0.10f, 500, R.drawable.skeleton);
+        addEnemy(57.5f, 22.5f, 0.10f, 500, R.drawable.skeleton);
+        addEnemy(46.5f, 9.5f, .15f, 400, R.drawable.skeleton);
         //
         // addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.orc);
         // addEnemy(51.5f, 10f, .2f, 350, R.drawable.orc);
-        // addEnemy(48.5f, 10f, .1f, 500, R.drawable.skeleton);
+//         addEnemy(48.5f, 10f, .1f, 500, R.drawable.skeleton);
         // addEnemy(46.5f, 9.5f, .2f, 350, R.drawable.skeleton);
     }
 
@@ -133,7 +134,7 @@ public class GameSystem
             Enemy current = iter.next();
             current.draw(gl);
         }
-        house.draw(gl, 47f, 13f, 0f, 0f, 1.75f);
+//        house.draw(gl, 47f, 13f, 0f, 0f, 1.75f);
         tombstone.draw(gl, 48.5f, 10f, 0f);
         tombstone.draw(gl, 47.7f, 10.3f, 0f);
         tombstone.draw(gl, 47.0f, 9.9f, 0f);

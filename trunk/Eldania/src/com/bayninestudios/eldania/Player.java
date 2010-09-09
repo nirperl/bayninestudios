@@ -23,7 +23,7 @@ public class Player
     private final int WALKFRAMESPEED = 250;
     private final int HEALPROCINTERVAL = 1000;
 
-    public int actionTimer = 2000;
+    public int actionTimer = 0;
     public final int ACTIONINTERVAL = 2000;
 
     private boolean moving = false;
@@ -33,14 +33,14 @@ public class Player
     public Player(Context context)
     {
         playerModel = new DrawModel(context, R.xml.player);
-        position = new Vector3(49.5f, 8.5f, 0f);
+        position = new Vector3(49.5f, 13.5f, 0f);
         lastUpdate = System.currentTimeMillis();
         healthBar = new DrawModel(context, R.xml.tile);
     }
 
     public void loadTextures(GL10 gl, Context context)
     {
-        playerModel.loadTexture(gl, context, R.drawable.player);
+        playerModel.loadTexture(gl, context, R.drawable.player3);
         playerModel.specialTex();
     }
 
@@ -78,7 +78,10 @@ public class Player
             healthBar.draw(gl, -4.7f, 2.4f, 0f, 0f, barScale);
 
             barScale.setxyz(((float) actionTimer) / ACTIONINTERVAL, 0.1f, 1f);
-            gl.glColor4f(1f, 1f, 1f, 1f);
+            if (actionTimer == ACTIONINTERVAL)
+                gl.glColor4f(0f, 8f, 0f, 1f);
+            else
+                gl.glColor4f(1f, 1f, 0f, 1f);
             healthBar.draw(gl, -4.7f, 2.4f, 0.1f, 0f, barScale);
         }
     }
@@ -182,6 +185,7 @@ public class Player
         long curTime = System.currentTimeMillis();
         long timeDif = curTime - lastUpdate;
         float frameRate = timeDif / 1000f;
+        // stopped walking
         if ((dx == 0) && (dy == 0))
         {
             walkFrame = 1;
@@ -190,6 +194,8 @@ public class Player
         }
         else
         {
+            // on the first step don't wait until the walkFrameTimer
+            // to do the first walk frame
             if (moving == false)
             {
                 moving = true;
@@ -198,18 +204,27 @@ public class Player
 
             float moveSpeed = MOVESPEED * frameRate;
             // move character
-            float newCharX = position.x + dx * moveSpeed;
-            float newCharY = position.y + dy * moveSpeed;
-
-            if (landscape.checkPassable(newCharX, position.y))
+            float newCharX = position.x + (dx * moveSpeed);
+            float newCharY = position.y + (dy * moveSpeed);
+            float characterWidth = 0.25f;
+            
+            if (landscape.checkPassable(newCharX + (dx*characterWidth), position.y))
             {
                 position.x = newCharX;
             }
-            if (landscape.checkPassable(position.x, newCharY))
+            if (landscape.checkPassable(position.x, newCharY + (dy*characterWidth)))
             {
                 position.y = newCharY;
             }
 
+            if (((int)position.x == 49) && ((int)position.y == 15))
+            {
+                landscape.cave.inside = true;
+            }
+            if (((int)position.x == 49) && ((int)position.y == 14))
+            {
+                landscape.cave.inside = false;
+            }
             walkFrameTimer = walkFrameTimer + timeDif;
             if (walkFrameTimer > WALKFRAMESPEED)
             {

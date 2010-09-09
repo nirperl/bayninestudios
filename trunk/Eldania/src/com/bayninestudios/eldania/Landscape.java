@@ -14,7 +14,10 @@ public class Landscape
     private DrawModel beachTile;
     private DrawModel sandTile;
     private DrawModel sandGrassTile;
+    private DrawModel caveFloorTile;
+    private DrawModel grassDirtTile;
     private TileMap map;
+    public Cave cave;
     public boolean useTextures;
     private int blendFactor = GL10.GL_ONE_MINUS_SRC_ALPHA;
 
@@ -29,6 +32,9 @@ public class Landscape
         beachTile = new DrawModel(context, R.xml.tile);
         sandTile = new DrawModel(context, R.xml.tile);
         sandGrassTile = new DrawModel(context, R.xml.tile);
+        caveFloorTile = new DrawModel(context, R.xml.tile);
+        grassDirtTile = new DrawModel(context, R.xml.tile);
+        cave = new Cave(context);
         map = new TileMap(context, R.xml.map);
         fog = new DrawModel(context, R.xml.tile);
         useTextures = true;
@@ -42,6 +48,9 @@ public class Landscape
         beachTile.loadTexture(gl, context, R.drawable.beach);
         sandTile.loadTexture(gl, context, R.drawable.sand);
         sandGrassTile.loadTexture(gl, context, R.drawable.grassand);
+        caveFloorTile.loadTexture(gl, context, R.drawable.stonefloor2);
+        grassDirtTile.loadTexture(gl, context, R.drawable.dirtgrass);
+        cave.loadTextures(gl, context);
         fog.loadTexture(gl, context, R.drawable.fog);
     }
 
@@ -50,15 +59,15 @@ public class Landscape
         int newBlend = GL10.GL_ZERO;
         switch (blendFactor)
         {
-        case GL10.GL_ZERO:                  newBlend = GL10.GL_ONE;break;
-        case GL10.GL_ONE:                   newBlend = GL10.GL_SRC_COLOR;break;
-        case GL10.GL_SRC_COLOR:             newBlend = GL10.GL_ONE_MINUS_SRC_COLOR;break;
-        case GL10.GL_ONE_MINUS_SRC_COLOR:   newBlend = GL10.GL_SRC_ALPHA;break;
-        case GL10.GL_SRC_ALPHA:             newBlend = GL10.GL_ONE_MINUS_SRC_ALPHA;break;
-        case GL10.GL_ONE_MINUS_SRC_ALPHA:   newBlend = GL10.GL_DST_ALPHA;break;
-        case GL10.GL_DST_ALPHA:             newBlend = GL10.GL_ONE_MINUS_DST_ALPHA;break;
-        case GL10.GL_ONE_MINUS_DST_ALPHA:   newBlend = GL10.GL_ZERO;break;
-        default: break;
+            case GL10.GL_ZERO:                  newBlend = GL10.GL_ONE;break;
+            case GL10.GL_ONE:                   newBlend = GL10.GL_SRC_COLOR;break;
+            case GL10.GL_SRC_COLOR:             newBlend = GL10.GL_ONE_MINUS_SRC_COLOR;break;
+            case GL10.GL_ONE_MINUS_SRC_COLOR:   newBlend = GL10.GL_SRC_ALPHA;break;
+            case GL10.GL_SRC_ALPHA:             newBlend = GL10.GL_ONE_MINUS_SRC_ALPHA;break;
+            case GL10.GL_ONE_MINUS_SRC_ALPHA:   newBlend = GL10.GL_DST_ALPHA;break;
+            case GL10.GL_DST_ALPHA:             newBlend = GL10.GL_ONE_MINUS_DST_ALPHA;break;
+            case GL10.GL_ONE_MINUS_DST_ALPHA:   newBlend = GL10.GL_ZERO;break;
+            default: break;
         }
         blendFactor = newBlend;
         Log.d(">", "new blend");
@@ -123,8 +132,33 @@ public class Landscape
                     else
                         tile.draw(gl, tileX, tileY, 0f);
                 }
+                else if (tileType == 6)
+                {
+                    if (cave.inside)
+                    {
+                        if (useTextures)
+                            caveFloorTile.draw(gl, tileX, tileY, 0f);
+                        else
+                            tile.draw(gl, tileX, tileY, 0f);
+                    }
+                }
+                else if (tileType == 7)
+                {
+                    if (useTextures)
+                        caveFloorTile.draw(gl, tileX, tileY, 0f);
+                    else
+                        tile.draw(gl, tileX, tileY, 0f);
+                }
+                else if (tileType == 8)
+                {
+                    if (useTextures)
+                        grassDirtTile.draw(gl, tileX, tileY, 0f);
+                    else
+                        tile.draw(gl, tileX, tileY, 0f);
+                }
             }
         }
+        cave.draw(gl);
     }
     
     // TODO: just a proof of concept

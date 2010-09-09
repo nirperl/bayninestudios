@@ -25,7 +25,7 @@ public class Enemy
     private PatrolComponent patrol;
     public boolean dead = false;
 
-    public int actionTimer = 3000;
+    public int actionTimer = 0;
     public final int ACTIONINTERVAL = 3000;
 
     public int textureResource;
