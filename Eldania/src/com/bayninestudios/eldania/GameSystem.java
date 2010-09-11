@@ -119,6 +119,7 @@ public class GameSystem
         }
         checkCombat();
         combatSystem.update();
+        mLandscape.updatePart();
     }
 
     public void draw(GL10 gl)
@@ -147,11 +148,16 @@ public class GameSystem
         gl.glPopMatrix();
         mPlayer.draw(gl);
 
+        
+        gl.glPushMatrix();
+        gl.glTranslatef(-0f, -0f, 0f);
+        mLandscape.drawPart(gl);
+        gl.glPopMatrix();
+
         // TODO fix up, just a proof of concept
 //        gl.glPushMatrix();
 //        gl.glTranslatef(-mPlayer.x, -mPlayer.y, -mPlayer.z);
 //        mLandscape.drawFog(gl);
-//        gl.glPopMatrix();
     }
 
     public void drawTargetTile(GL10 gl, Vector3 target)

@@ -155,6 +155,31 @@ public class DrawModel
         gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
     }
 
+    public void superTexture()
+    {
+        float[] tcoords2 = new float[4*4*4*2];
+        int position = 0;
+        float[] baseCoords = {0.0f, .25f, 0.0f, 0.0f, 0.25f, 0.0f, 0.25f, 0.25f};
+        for (int j = 0; j < 4; j++)
+        {
+            for (int k = 0; k < 4; k++)
+            {
+                tcoords2[position++] = baseCoords[0]+(k*.25f);
+                tcoords2[position++] = baseCoords[1]+(j*.25f);
+
+                tcoords2[position++] = baseCoords[2]+(k*.25f);
+                tcoords2[position++] = baseCoords[3]+(j*.25f);
+
+                tcoords2[position++] = baseCoords[4]+(k*.25f);
+                tcoords2[position++] = baseCoords[5]+(j*.25f);
+
+                tcoords2[position++] = baseCoords[6]+(k*.25f);
+                tcoords2[position++] = baseCoords[7]+(j*.25f);
+            }
+        }
+        mTexBuffer = Util.makeFloatBuffer(tcoords2);
+    }
+
     public void specialTex()
     {
         float fudge = 0.01f;
@@ -215,6 +240,12 @@ public class DrawModel
     {
         mTexBuffer.position(facing);
         draw(gl, pos.x, pos.y, pos.z);
+    }
+
+    public void tileDraw(GL10 gl, int x, int y, int z, int frame)
+    {
+        mTexBuffer.position(frame);
+        draw(gl, x, y, z);
     }
 
     public void draw(GL10 gl)

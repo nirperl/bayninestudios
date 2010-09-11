@@ -12,7 +12,7 @@ import android.util.Log;
 public class Speedo
 {
     private final static int VERTS = 3;
-    private final static int FRAMECOUNT = 200;
+    private final static int FRAMECOUNT = 100;
 
     private FloatBuffer mFVertexBuffer;
     private ShortBuffer mIndexBuffer;
