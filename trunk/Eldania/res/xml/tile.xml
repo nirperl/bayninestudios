@@ -10,22 +10,22 @@
                <vertex>
                   <position x="0.0" y="0.0" z="0.0" />
                   <normal x="0.0" y="0.0" z="1.0" />
-                  <texcoord u="0.02" v="0.98"/>
+                  <texcoord u="0.0" v="1.0"/>
                </vertex>
                <vertex>
                   <position x="0.0" y="1.0" z="0.0" />
                   <normal x="0.0" y="0.0" z="1.0" />
-                  <texcoord u="0.02" v="0.02"/>
+                  <texcoord u="0.0" v="0.0"/>
                </vertex>
                <vertex>
                   <position x="1.0" y="1.0" z="0.0" />
                   <normal x="0.0" y="0.0" z="1.0" />
-                  <texcoord u="0.98" v="0.02"/>
+                  <texcoord u="1.0" v="0.0"/>
                </vertex>
                <vertex>
                   <position x="1.0" y="0.0" z="0.0" />
                   <normal x="0.0" y="0.0" z="1.0" />
-                  <texcoord u="0.98" v="0.98"/>
+                  <texcoord u="1.0" v="1.0"/>
                </vertex>
             </vertexbuffer>
          </geometry>

@@ -8,48 +8,28 @@ import android.util.Log;
 public class Landscape
 {
     private DrawModel tile;
-    private DrawModel dirtTile;
-    private DrawModel grassTile;
-    private DrawModel waterTile;
-    private DrawModel beachTile;
-    private DrawModel sandTile;
-    private DrawModel sandGrassTile;
-    private DrawModel caveFloorTile;
-    private DrawModel grassDirtTile;
     private TileMap map;
     public Cave cave;
     public boolean useTextures;
     private int blendFactor = GL10.GL_ONE_MINUS_SRC_ALPHA;
+    private ParticleSystem part;
 
     private DrawModel fog;
-
+    
     public Landscape(Context context)
     {
         tile = new DrawModel(context, R.xml.tile);
-        dirtTile = new DrawModel(context, R.xml.tile);
-        grassTile = new DrawModel(context, R.xml.tile);
-        waterTile = new DrawModel(context, R.xml.tile);
-        beachTile = new DrawModel(context, R.xml.tile);
-        sandTile = new DrawModel(context, R.xml.tile);
-        sandGrassTile = new DrawModel(context, R.xml.tile);
-        caveFloorTile = new DrawModel(context, R.xml.tile);
-        grassDirtTile = new DrawModel(context, R.xml.tile);
         cave = new Cave(context);
         map = new TileMap(context, R.xml.map);
         fog = new DrawModel(context, R.xml.tile);
         useTextures = true;
+        part = new ParticleSystem();
     }
 
     public void loadTextures(GL10 gl, Context context)
     {
-        dirtTile.loadTexture(gl, context, R.drawable.dirt12);
-        grassTile.loadTexture(gl, context, R.drawable.acharya_grass3);
-        waterTile.loadTexture(gl, context, R.drawable.water2);
-        beachTile.loadTexture(gl, context, R.drawable.beach);
-        sandTile.loadTexture(gl, context, R.drawable.sand);
-        sandGrassTile.loadTexture(gl, context, R.drawable.grassand);
-        caveFloorTile.loadTexture(gl, context, R.drawable.stonefloor2);
-        grassDirtTile.loadTexture(gl, context, R.drawable.dirtgrass);
+        tile.loadTexture(gl, context, R.drawable.supertexture);
+        tile.superTexture();
         cave.loadTextures(gl, context);
         fog.loadTexture(gl, context, R.drawable.fog);
     }
@@ -84,78 +64,8 @@ public class Landscape
                 int tileX = x + (int) charX;
                 int tileY = y + (int) charY;
                 int tileType = map.getTile(tileX, tileY);
-                if (tileType == 0)
-                {
-//                    gl.glColor4f(0f, 0f, .7f, 1f);
-//                    if (useTextures)
-//                        waterTile.draw(gl, tileX, tileY, 0f);
-//                    else
-//                        tile.draw(gl, tileX, tileY, 0f);
-                }
-                else if (tileType == 1)
-                {
-                    gl.glColor4f(0f, 0.5f, 0f, 1f);
-                    if (useTextures)
-                        grassTile.draw(gl, tileX, tileY, 0f);
-                    else
-                        tile.draw(gl, tileX, tileY, 0f);
-                }
-                else if (tileType == 2)
-                {
-                    gl.glColor4f(0.5f, 0.25f, 0.25f, 1f);
-                    if (useTextures)
-                        dirtTile.draw(gl, tileX, tileY, 0f);
-                    else
-                        tile.draw(gl, tileX, tileY, 0f);
-                }
-                else if (tileType == 3)
-                {
-                    gl.glColor4f(0.5f, 0.25f, 0.25f, 1f);
-                    if (useTextures)
-                        beachTile.draw(gl, tileX, tileY, 0f);
-                    else
-                        tile.draw(gl, tileX, tileY, 0f);
-                }
-                else if (tileType == 4)
-                {
-                    gl.glColor4f(0.5f, 0.25f, 0.25f, 1f);
-                    if (useTextures)
-                        sandTile.draw(gl, tileX, tileY, 0f);
-                    else
-                        tile.draw(gl, tileX, tileY, 0f);
-                }
-                else if (tileType == 5)
-                {
-                    gl.glColor4f(0.5f, 0.25f, 0.25f, 1f);
-                    if (useTextures)
-                        sandGrassTile.draw(gl, tileX, tileY, 0f);
-                    else
-                        tile.draw(gl, tileX, tileY, 0f);
-                }
-                else if (tileType == 6)
-                {
-                    if (cave.inside)
-                    {
-                        if (useTextures)
-                            caveFloorTile.draw(gl, tileX, tileY, 0f);
-                        else
-                            tile.draw(gl, tileX, tileY, 0f);
-                    }
-                }
-                else if (tileType == 7)
-                {
-                    if (useTextures)
-                        caveFloorTile.draw(gl, tileX, tileY, 0f);
-                    else
-                        tile.draw(gl, tileX, tileY, 0f);
-                }
-                else if (tileType == 8)
-                {
-                    if (useTextures)
-                        grassDirtTile.draw(gl, tileX, tileY, 0f);
-                    else
-                        tile.draw(gl, tileX, tileY, 0f);
-                }
+                if (tileType != 0)
+                    tile.tileDraw(gl, tileX, tileY, 0, (tileType - 1) * 8);
             }
         }
         cave.draw(gl);
@@ -169,6 +79,16 @@ public class Landscape
         Vector3 scaleVec = new Vector3(10f,10f,1f);
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, blendFactor);
         fog.draw(gl, 47f, 8f, 0.2f, 0f, scaleVec);
+    }
+
+    public void drawPart(GL10 gl)
+    {
+        part.draw(gl);
+    }
+
+    public void updatePart()
+    {
+        part.update();
     }
 
     public boolean checkPassable(float x, float y)
