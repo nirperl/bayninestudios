@@ -253,6 +253,12 @@ public class DrawModel
         draw(gl, x, y, z);
     }
 
+    public void tileDraw(GL10 gl, float x, float y, float z, int frame)
+    {
+        mTexBuffer.position(frame);
+        draw(gl, x, y, z);
+    }
+
     public void draw(GL10 gl)
     {
         if (hasTexture)

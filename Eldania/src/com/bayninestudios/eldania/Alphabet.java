@@ -38,4 +38,9 @@ public class Alphabet
         }
         character.setTexBuffer(Util.makeFloatBuffer(tcoords2));
     }
+    
+    public void draw(GL10 gl, float x, float y, int chr)
+    {
+        character.tileDraw(gl, x, y, 0f, chr*8);
+    }
 }
