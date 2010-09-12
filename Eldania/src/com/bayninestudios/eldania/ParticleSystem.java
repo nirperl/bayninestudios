@@ -61,6 +61,7 @@ public class ParticleSystem
 
     public void draw(GL10 gl)
     {
+        gl.glDisable(GL10.GL_TEXTURE_2D);
     	gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
 		for (int i = 0; i < PARTICLECOUNT; i++)
 		{
@@ -70,6 +71,7 @@ public class ParticleSystem
 		    gl.glDrawElements(GL10.GL_TRIANGLES, 3, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
 		    gl.glPopMatrix();
     	}
+        gl.glEnable(GL10.GL_TEXTURE_2D);
 	}
 
     private void initParticle(int i)

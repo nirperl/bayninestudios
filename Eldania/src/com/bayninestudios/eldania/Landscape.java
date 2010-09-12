@@ -56,7 +56,6 @@ public class Landscape
 
     public void draw(GL10 gl, float charX, float charY)
     {
-        gl.glColor4f(.5f, .5f, .5f, 1f);
         for (int y = -3; y < 4; y++)
         {
             for (int x = -4; x < 5; x++)

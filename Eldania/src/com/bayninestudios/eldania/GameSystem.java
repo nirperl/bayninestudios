@@ -18,6 +18,7 @@ public class GameSystem
     private Landscape mLandscape;
     private Context context;
     private DrawModel targetTile;
+    private Alphabet alpha;
 
     public GameSystem(Context context)
     {
@@ -29,6 +30,7 @@ public class GameSystem
         tombstone = new DrawModel(context, R.xml.tombstone);
         targetTile = new DrawModel(context, R.xml.tile);
         enemies = new ArrayList<Enemy>();
+        alpha = new Alphabet(context);
         addEnemies();
     }
 
@@ -70,6 +72,7 @@ public class GameSystem
         house.loadTexture(gl, context, R.drawable.stone);
         tombstone.loadTexture(gl, context, R.drawable.tombstone2);
         targetTile.loadTexture(gl, context, R.drawable.target);
+        alpha.loadTexture(gl, context, R.drawable.alphabet);
         Iterator<Enemy> iter = enemies.iterator();
         while (iter.hasNext())
         {
@@ -169,6 +172,7 @@ public class GameSystem
 
     public void drawDash(GL10 gl)
     {
+        gl.glDisable(GL10.GL_TEXTURE_2D);
         Iterator<Enemy> iter = enemies.iterator();
         mPlayer.drawDash(gl);
         while (iter.hasNext())
@@ -179,6 +183,7 @@ public class GameSystem
             if (current.inCombat)
                 current.drawDash(gl);
         }
+        gl.glEnable(GL10.GL_TEXTURE_2D);
     }
 
     public void toggleTextures()
