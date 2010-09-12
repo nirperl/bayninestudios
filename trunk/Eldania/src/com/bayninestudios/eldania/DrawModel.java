@@ -155,6 +155,11 @@ public class DrawModel
         gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
     }
 
+    public void setTexBuffer(FloatBuffer newTexBuffer)
+    {
+        mTexBuffer = newTexBuffer;
+    }
+
     public void superTexture()
     {
         float[] tcoords2 = new float[4*4*4*2];
@@ -182,7 +187,7 @@ public class DrawModel
 
     public void specialTex()
     {
-        float fudge = 0.01f;
+        float fudge = 0.00f;
         float[] tcoords2 = new float[3*4*4*2];
         int position = 0;
         float[] baseCoords = {0.0f, 0.25f, 0.0f, 0.0f, 0.33f, 0.25f, 0.33f, 0.0f};
@@ -254,13 +259,20 @@ public class DrawModel
         {
             gl.glEnable(GL10.GL_TEXTURE_2D);
             gl.glBindTexture(GL10.GL_TEXTURE_2D, mTexture[0]);
+            // this is here to make the tiles seamless, need to refactor this cause it
+            // kills performance, also makes things pixelated, ugg
+            gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+            gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
+            gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+            gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
+            gl.glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
         }
         gl.glFrontFace(GL10.GL_CCW);
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
         gl.glNormalPointer(GL10.GL_FLOAT, 0, mNormalBuffer);
         gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
         gl.glDrawElements(GL10.GL_TRIANGLES, vertexCount, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
-        gl.glDisable(GL10.GL_TEXTURE_2D);
+//        gl.glDisable(GL10.GL_TEXTURE_2D);
     }
 
     public void draw(GL10 gl, float x, float y, float z, float rot, Vector3 scale)
