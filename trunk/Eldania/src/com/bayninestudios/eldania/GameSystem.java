@@ -147,15 +147,12 @@ public class GameSystem
         {
             drawTargetTile(gl, combatSystem.getTarget());
         }
+        mLandscape.drawPart(gl);
 
         gl.glPopMatrix();
         mPlayer.draw(gl);
 
         
-        gl.glPushMatrix();
-        gl.glTranslatef(-0f, -0f, 0f);
-        mLandscape.drawPart(gl);
-        gl.glPopMatrix();
 
         // TODO fix up, just a proof of concept
 //        gl.glPushMatrix();
@@ -184,6 +181,11 @@ public class GameSystem
                 current.drawDash(gl);
         }
         gl.glEnable(GL10.GL_TEXTURE_2D);
+        alpha.draw(gl, -4f, 1f, 6);
+        alpha.draw(gl, -3.4f, 1f, 7);
+        alpha.draw(gl, -2.8f, 1f, 8);
+        alpha.draw(gl, -2.2f, 1f, 9);
+        alpha.draw(gl, -1.6f, 1f, 10);
     }
 
     public void toggleTextures()

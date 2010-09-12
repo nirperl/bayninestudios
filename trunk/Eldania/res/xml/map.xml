@@ -22,7 +22,7 @@
     <tile x="45" y="12" look="1" passable="1" interact="0"/>
     <tile x="46" y="12" look="1" passable="1" interact="0"/>
     <tile x="47" y="12" look="1" passable="1" interact="0"/>
-    <tile x="48" y="12" look="1" passable="1" interact="0"/>
+    <tile x="48" y="12" look="9" passable="0" interact="0"/>
     <tile x="45" y="13" look="1" passable="1" interact="0"/>
     <tile x="46" y="13" look="1" passable="1" interact="0"/>
     <tile x="47" y="13" look="1" passable="1" interact="0"/>

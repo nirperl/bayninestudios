@@ -80,9 +80,14 @@ public class Landscape
         fog.draw(gl, 47f, 8f, 0.2f, 0f, scaleVec);
     }
 
+    // TODO: another proof of concept. This thing is turning
+    // more into a tech demo than a game :(
     public void drawPart(GL10 gl)
     {
+        gl.glPushMatrix();
+        gl.glTranslatef(49.5f, 12.5f, 0f);
         part.draw(gl);
+        gl.glPopMatrix();
     }
 
     public void updatePart()
