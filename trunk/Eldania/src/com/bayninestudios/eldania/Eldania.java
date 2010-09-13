@@ -138,6 +138,7 @@ class ClearGLSurfaceView extends GLSurfaceView
                 }
                 else if (keyCode == KeyEvent.KEYCODE_1)
                 {
+                    mRenderer.playerAction2();
                 }
                 // + button
                 else if (keyCode == KeyEvent.KEYCODE_P)
@@ -164,7 +165,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
     private GameSystem gameSystem;
 
     private float mCameraX = 0f;
-    private float zoom = 1.0f;
+    private float zoom = 1.1f;
     private float mCameraY = -8f * zoom;
     private float mCameraZ = 12f * zoom;
 
@@ -185,6 +186,11 @@ class ClearRenderer implements GLSurfaceView.Renderer
     public void playerAction()
     {
         gameSystem.playerAction();
+    }
+
+    public void playerAction2()
+    {
+        gameSystem.playerAction2();
     }
 
     public void stopCharacter(int keyCode)

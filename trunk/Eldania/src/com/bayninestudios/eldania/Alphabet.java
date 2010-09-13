@@ -3,6 +3,7 @@ package com.bayninestudios.eldania;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.util.Log;
 
 public class Alphabet
 {
@@ -15,32 +16,69 @@ public class Alphabet
     
     public void loadTexture(GL10 gl, Context context, int tex)
     {
+        int columnCount = 16;
+        int rowCount = 16;
+
         character.loadTexture(gl, context, tex);
-        float[] tcoords2 = new float[5*6*4*2];
+        float[] tcoords2 = new float[columnCount*rowCount*4*2];
         int position = 0;
-        float[] baseCoords = {0.0f, .16666f, 0.0f, 0.0f, 0.20f, 0.0f, 0.20f, 0.16666f};
-        for (int j = 0; j < 6; j++)
+        float xinc = 1.0f/columnCount;
+        float yinc = 1.0f/rowCount;
+        float[] baseCoords = {0.0f, yinc, 0.0f, 0.0f, xinc, 0.0f, xinc, yinc};
+        for (int j = 0; j < rowCount; j++)
         {
-            for (int k = 0; k < 5; k++)
+            for (int k = 0; k < columnCount; k++)
             {
-                tcoords2[position++] = baseCoords[0]+(k*.20f);
-                tcoords2[position++] = baseCoords[1]+(j*.166666f);
+                tcoords2[position++] = baseCoords[0]+(k*xinc);
+                tcoords2[position++] = baseCoords[1]+(j*yinc);
 
-                tcoords2[position++] = baseCoords[2]+(k*.2f);
-                tcoords2[position++] = baseCoords[3]+(j*.166666f);
+                tcoords2[position++] = baseCoords[2]+(k*xinc);
+                tcoords2[position++] = baseCoords[3]+(j*yinc);
 
-                tcoords2[position++] = baseCoords[4]+(k*.2f);
-                tcoords2[position++] = baseCoords[5]+(j*.166666f);
+                tcoords2[position++] = baseCoords[4]+(k*xinc);
+                tcoords2[position++] = baseCoords[5]+(j*yinc);
 
-                tcoords2[position++] = baseCoords[6]+(k*.2f);
-                tcoords2[position++] = baseCoords[7]+(j*.166666f);
+                tcoords2[position++] = baseCoords[6]+(k*xinc);
+                tcoords2[position++] = baseCoords[7]+(j*yinc);
             }
         }
         character.setTexBuffer(Util.makeFloatBuffer(tcoords2));
     }
     
-    public void draw(GL10 gl, float x, float y, int chr)
+    public void draw(GL10 gl, float x, float y, int chr, Vector3 scale)
     {
-        character.tileDraw(gl, x, y, 0f, chr*8);
+        gl.glPushMatrix();
+        gl.glTranslatef(x, y, 0f);
+        gl.glScalef(scale.x, scale.y, scale.z);
+        character.texturePosition(chr);
+        character.draw(gl);
+        gl.glPopMatrix();
+    }
+
+    public void draw(GL10 gl, String chr)
+    {
+        float textScale = 0.35f;
+        float x = -4f;
+        float y = 2f;
+        float spacing = 0.3f;
+
+        for (int loop = 0; loop < chr.length(); loop++)
+        {
+            int chtr = chr.charAt(loop);
+            if (chtr == 10)
+            {
+                y -= .35f;
+                x = -4f;
+            }
+            else
+            {
+                gl.glPushMatrix();
+                gl.glTranslatef(x+=spacing, y, 0f);
+                gl.glScalef(textScale, textScale, 1f);
+                character.texturePosition(chtr);
+                character.draw(gl);
+                gl.glPopMatrix();
+            }
+        }
     }
 }

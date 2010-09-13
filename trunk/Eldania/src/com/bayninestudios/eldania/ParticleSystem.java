@@ -1,7 +1,5 @@
 package com.bayninestudios.eldania;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.Random;
@@ -13,13 +11,13 @@ public class ParticleSystem
 	private Particle[] mParticles;
 
 	// probably a good idea to add these two to the constructor
-	private int PARTICLECOUNT = 10;
+	private int PARTICLECOUNT = 20;
 	private int activeParticles = 0;
 
 	// gravity is 10, no real reason, but gotta start with something
 	// and 10m/s sounds good
 	private float GRAVITY = 10f;
-	private float PARTICLESIZE = 0.03f;
+	private float PARTICLESIZE = 0.02f;
 	// don't let particles go below this z value
 	private float FLOOR = 0.0f;
 	
@@ -31,6 +29,7 @@ public class ParticleSystem
 	// for use to draw the particle
 	private FloatBuffer mVertexBuffer;
 	private ShortBuffer mIndexBuffer;
+    private FloatBuffer mTexBuffer;
 	
 	private Random gen;
 
@@ -50,11 +49,13 @@ public class ParticleSystem
 	    float[] coords = {
 	    		-PARTICLESIZE,0.0f,0.0f,
 	    		PARTICLESIZE,0.0f,0.0f,
-	    		0.0f,0.0f,PARTICLESIZE};
+	    		0.0f,0.0f,PARTICLESIZE*2};
 	    short[] icoords = {0,1,2};
+	    float[] tcoords = {0f,1f,1f,1f,0.5f,0f};
 
 	    mVertexBuffer = Util.makeFloatBuffer(coords);
 	    mIndexBuffer = Util.makeShortBuffer(icoords);
+        mTexBuffer = Util.makeFloatBuffer(tcoords);
 	    
 	    lastTime = System.currentTimeMillis();
 	}
@@ -81,15 +82,17 @@ public class ParticleSystem
 		mParticles[i].y = 0f;
 		mParticles[i].z = 0f;
 		// random x and y speed between -1.0 and 1.0
-        mParticles[i].dx = ((gen.nextFloat()*2f) - 1f) * 0.2f;
-		mParticles[i].dy = ((gen.nextFloat()*2f) - 1f) * 0.2f;
+        mParticles[i].dx = ((gen.nextFloat()*2f) - 1f) * 0.1f;
+		mParticles[i].dy = ((gen.nextFloat()*2f) - 1f) * 0.1f;
 		// random z speed between 4.0 and 7.0
 		mParticles[i].dz = (gen.nextFloat()*1) + 3f;
 
 		// set color (mostly blue, for water)
-		mParticles[i].blue = (gen.nextFloat()+1f)/2f;
-		mParticles[i].red = mParticles[i].blue * .8f;
-		mParticles[i].green = mParticles[i].blue * .8f;
+//		mParticles[i].blue = (gen.nextFloat()+1f)/2f;
+        mParticles[i].blue = (gen.nextFloat()*.30f)+.70f;
+        mParticles[i].blue = 1.0f;
+		mParticles[i].red = (gen.nextFloat()*.40f)+.6f;
+		mParticles[i].green = (gen.nextFloat()*.40f)+.6f;
 		
 		// set time to live
         mParticles[i].timeToLive = gen.nextFloat()*.7f+0.2f;
@@ -109,7 +112,7 @@ public class ParticleSystem
     	{
     		// calculate how many particles per frame.  I have set
     		// the particles per second at 100
-    		int addParticleCount = new Float(100f * timeFrame).intValue();
+    		int addParticleCount = new Float(1f * timeFrame).intValue();
     		// always be adding at least one particle
     		if (addParticleCount < 1)
     		{
@@ -139,14 +142,6 @@ public class ParticleSystem
 			{
 			    initParticle(i);
 			}
-			
-			// fourth decrement the time to live for the particle,
-			// if it gets below zero, respawn it
-//			mParticles[i].timeToLive = mParticles[i].timeToLive - timeFrame;
-//			if (mParticles[i].timeToLive < 0f)
-//			{
-//				initParticle(i);
-//			}
 		}
     }
 }
