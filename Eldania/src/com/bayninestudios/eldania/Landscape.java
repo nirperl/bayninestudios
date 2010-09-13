@@ -15,6 +15,7 @@ public class Landscape
     private ParticleSystem part;
 
     private DrawModel fog;
+    private DrawModel fog2;
     
     public Landscape(Context context)
     {
@@ -22,6 +23,7 @@ public class Landscape
         cave = new Cave(context);
         map = new TileMap(context, R.xml.map);
         fog = new DrawModel(context, R.xml.tile);
+        fog2 = new DrawModel(context, R.xml.tile);
         useTextures = true;
         part = new ParticleSystem();
     }
@@ -31,9 +33,11 @@ public class Landscape
         tile.loadTexture(gl, context, R.drawable.supertexture);
         tile.superTexture();
         cave.loadTextures(gl, context);
-        fog.loadTexture(gl, context, R.drawable.fog);
+        fog.loadTexture(gl, context, R.drawable.fog2);
+        fog2.loadTexture(gl, context, R.drawable.fog2);
     }
 
+    
     public void nextBlend()
     {
         int newBlend = GL10.GL_ZERO;
@@ -73,19 +77,27 @@ public class Landscape
     // TODO: just a proof of concept
     public void drawFog(GL10 gl)
     {
+        fog.animateTex(0.00025f);
+        fog2.animateTex(-0.00015f);
         gl.glEnable(GL10.GL_BLEND);
 //        gl.glDisable(GL10.GL_ALPHA_TEST);
-        Vector3 scaleVec = new Vector3(10f,10f,1f);
+        Vector3 scaleVec = new Vector3(4.0f,3.9f,1f);
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, blendFactor);
-        fog.draw(gl, 47f, 8f, 0.2f, 0f, scaleVec);
+        fog.draw(gl, 45f, 9f, 0.2f, 0f, scaleVec);
+        fog2.draw(gl, 45f, 9f, 0.21f, 0f, scaleVec);
+
+        scaleVec.setxyz(4f, 3f, 1f);
+        fog.draw(gl, 55f, 21f, 0.2f, 0f, scaleVec);
+        fog2.draw(gl, 55f, 21f, 0.21f, 0f, scaleVec);
+        gl.glDisable(GL10.GL_BLEND);
     }
 
     // TODO: another proof of concept. This thing is turning
     // more into a tech demo than a game :(
-    public void drawPart(GL10 gl)
+    public void drawPart(float x, float y, GL10 gl)
     {
         gl.glPushMatrix();
-        gl.glTranslatef(49.5f, 12.5f, 0f);
+        gl.glTranslatef(x, y, 0f);
         part.draw(gl);
         gl.glPopMatrix();
     }

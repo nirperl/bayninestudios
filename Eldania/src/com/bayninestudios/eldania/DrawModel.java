@@ -1,8 +1,6 @@
 package com.bayninestudios.eldania;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
@@ -24,8 +22,10 @@ public class DrawModel
     private FloatBuffer mTexBuffer;
     private ShortBuffer mIndexBuffer;
     private boolean hasTexture = false;
+    private boolean superTexture = false;
     private int vertexCount = 3;
     private int[] mTexture = new int[1];
+    float[] texCoords;
 
     public DrawModel(Context context, int xmlFile)
     {
@@ -39,7 +39,7 @@ public class DrawModel
         float[] coords = null;
         short[] icoords = null;
         float[] ncoords = null;
-        float[] tcoords = null;
+//        float[] tcoords = null;
         int vertexIndex = 0;
         int texIndex = 0;
         int faceIndex = 0;
@@ -64,7 +64,7 @@ public class DrawModel
                         Log.d("coords", Integer.toString(i));
                         coords = new float[i * 3];
                         ncoords = new float[i * 3];
-                        tcoords = new float[i * 2];
+                        texCoords = new float[i * 2];
                     }
                     if (s.equals("position"))
                     {
@@ -97,8 +97,8 @@ public class DrawModel
                         float v = xrp.getAttributeFloatValue(null, "v", 0);
                         if (ncoords != null)
                         {
-                            tcoords[texIndex++] = u;
-                            tcoords[texIndex++] = v;
+                            texCoords[texIndex++] = u;
+                            texCoords[texIndex++] = v;
                         }
                     }
                     if (s.equals("face"))
@@ -138,7 +138,7 @@ public class DrawModel
         }
         mVertexBuffer = Util.makeFloatBuffer(coords);
         mNormalBuffer = Util.makeFloatBuffer(ncoords);
-        mTexBuffer = Util.makeFloatBuffer(tcoords);
+        mTexBuffer = Util.makeFloatBuffer(texCoords);
         mIndexBuffer = Util.makeShortBuffer(icoords);
     }
 
@@ -158,10 +158,12 @@ public class DrawModel
     public void setTexBuffer(FloatBuffer newTexBuffer)
     {
         mTexBuffer = newTexBuffer;
+        superTexture = true;
     }
 
     public void superTexture()
     {
+        superTexture = true;
         float[] tcoords2 = new float[4*4*4*2];
         int position = 0;
         float[] baseCoords = {0.0f, .25f, 0.0f, 0.0f, 0.25f, 0.0f, 0.25f, 0.25f};
@@ -187,6 +189,7 @@ public class DrawModel
 
     public void specialTex()
     {
+        superTexture = true;
         float fudge = 0.00f;
         float[] tcoords2 = new float[3*4*4*2];
         int position = 0;
@@ -253,6 +256,22 @@ public class DrawModel
         draw(gl, x, y, z);
     }
 
+    public void texturePosition(int frame)
+    {
+        mTexBuffer.position(frame * 8);
+    }
+
+    public void animateTex(float factor)
+    {
+        for (int loop = 0; loop < texCoords.length; loop++)
+        {
+            texCoords[loop]+= factor;
+//            if (texCoords[loop] > 1.0f)
+//                texCoords[loop] -= 1.0f;
+        }
+        mTexBuffer = Util.makeFloatBuffer(texCoords);
+    }
+
     public void tileDraw(GL10 gl, float x, float y, float z, int frame)
     {
         mTexBuffer.position(frame);
@@ -265,13 +284,16 @@ public class DrawModel
         {
             gl.glEnable(GL10.GL_TEXTURE_2D);
             gl.glBindTexture(GL10.GL_TEXTURE_2D, mTexture[0]);
-            // this is here to make the tiles seamless, need to refactor this cause it
+            // this is here to make the textures not repeat, need to refactor this cause it
             // kills performance, also makes things pixelated, ugg
-            gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-            gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-            gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-            gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
-            gl.glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+            if (superTexture)
+            {
+                gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+                gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
+                gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+                gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
+                gl.glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+            }
         }
         gl.glFrontFace(GL10.GL_CCW);
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
