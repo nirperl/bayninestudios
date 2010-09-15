@@ -161,7 +161,6 @@ class ClearGLSurfaceView extends GLSurfaceView
 
 class ClearRenderer implements GLSurfaceView.Renderer
 {
-    private Speedo mSpeedo;
     private GameSystem gameSystem;
 
     private float mCameraX = 0f;
@@ -171,7 +170,6 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
     public ClearRenderer(Context context, Activity act)
     {
-        mSpeedo = new Speedo();
         gameSystem = new GameSystem(context);
     }
 
@@ -234,7 +232,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
 
     public void onDrawFrame(GL10 gl)
     {
-        mSpeedo.setStartTime();
+        gameSystem.startSpeedo();
 
         gl.glLoadIdentity();
         GLU.gluPerspective(gl, 15.0f, 80.0f / 48.0f, 1, 100);
@@ -251,8 +249,8 @@ class ClearRenderer implements GLSurfaceView.Renderer
         GLU.gluOrtho2D(gl, -5f, 5f, -3f, 3f);
 
         gameSystem.drawDash(gl);
-        mSpeedo.setEndTime();
-        mSpeedo.draw(gl);
+        gameSystem.stopSpeedo();
+        gameSystem.drawSpeedo(gl);
 
     }
 }

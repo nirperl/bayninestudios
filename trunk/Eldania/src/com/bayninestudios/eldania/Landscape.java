@@ -10,6 +10,8 @@ public class Landscape
     private DrawModel tile;
     private TileMap map;
     public Cave cave;
+    private DrawModel tombstone;
+    private DrawModel tombstone2;
     public boolean useTextures;
     private int blendFactor = GL10.GL_ONE_MINUS_SRC_ALPHA;
     private ParticleSystem part;
@@ -21,6 +23,8 @@ public class Landscape
     {
         tile = new DrawModel(context, R.xml.tile);
         cave = new Cave(context);
+        tombstone = new DrawModel(context, R.xml.tombstone1);
+        tombstone2 = new DrawModel(context, R.xml.tombstone2);
         map = new TileMap(context, R.xml.map);
         fog = new DrawModel(context, R.xml.tile);
         fog2 = new DrawModel(context, R.xml.tile);
@@ -35,6 +39,8 @@ public class Landscape
         cave.loadTextures(gl, context);
         fog.loadTexture(gl, context, R.drawable.fog2);
         fog2.loadTexture(gl, context, R.drawable.fog2);
+        tombstone.loadTexture(gl, context, R.drawable.tombstone2);
+        tombstone2.loadTexture(gl, context, R.drawable.tombstone);
     }
 
     
@@ -72,13 +78,22 @@ public class Landscape
             }
         }
         cave.draw(gl);
+
+        tombstone.draw(gl, 48.5f, 10f, 0f);
+        tombstone.draw(gl, 46.9f, 11f, 0f);
+        tombstone.draw(gl, 47.8f, 11.1f, 0f);
+        tombstone.draw(gl, 46.2f, 10.4f, 0f);
+        tombstone2.draw(gl, 47.0f, 9.9f, 0f);
+        tombstone2.draw(gl, 47.7f, 10.2f, 0f);
+        tombstone2.draw(gl, 46.0f, 11.4f, 0f);
+        tombstone.draw(gl, 47.6f, 9.2f, 0f);
     }
     
     // TODO: just a proof of concept
     public void drawFog(GL10 gl)
     {
-        fog.animateTex(0.00025f);
-        fog2.animateTex(-0.00015f);
+        fog.animateTex(0.0004f);
+        fog2.animateTex(-0.0002f);
         gl.glEnable(GL10.GL_BLEND);
 //        gl.glDisable(GL10.GL_ALPHA_TEST);
         Vector3 scaleVec = new Vector3(4.0f,3.9f,1f);

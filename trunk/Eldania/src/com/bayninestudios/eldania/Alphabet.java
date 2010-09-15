@@ -55,11 +55,9 @@ public class Alphabet
         gl.glPopMatrix();
     }
 
-    public void draw(GL10 gl, String chr)
+    public void draw(GL10 gl, float x, float y, String chr)
     {
         float textScale = 0.35f;
-        float x = -4f;
-        float y = 2f;
         float spacing = 0.3f;
 
         for (int loop = 0; loop < chr.length(); loop++)

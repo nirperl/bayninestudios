@@ -11,13 +11,13 @@ import android.util.Log;
 public class GameSystem
 {
     private CombatSystem combatSystem;
-    private DrawModel tombstone;
     private ArrayList<Enemy> enemies;
     public Player mPlayer;
     private Landscape mLandscape;
     private Context context;
     private DrawModel targetTile;
     private Alphabet alpha;
+    private Speedo mSpeedo;
     private boolean showText = false;
 
     public GameSystem(Context context)
@@ -26,10 +26,10 @@ public class GameSystem
         mPlayer = new Player(context);
         combatSystem = new CombatSystem(mPlayer);
         mLandscape = new Landscape(context);
-        tombstone = new DrawModel(context, R.xml.tombstone);
         targetTile = new DrawModel(context, R.xml.tile);
         enemies = new ArrayList<Enemy>();
         alpha = new Alphabet(context);
+        mSpeedo = new Speedo();
         addEnemies();
     }
 
@@ -68,7 +68,6 @@ public class GameSystem
     {
         mLandscape.loadTextures(gl, context);
         mPlayer.loadTextures(gl, context);
-        tombstone.loadTexture(gl, context, R.drawable.tombstone2);
         targetTile.loadTexture(gl, context, R.drawable.target);
         alpha.loadTexture(gl, context, R.drawable.simplealpha);
         Iterator<Enemy> iter = enemies.iterator();
@@ -136,9 +135,6 @@ public class GameSystem
             Enemy current = iter.next();
             current.draw(gl);
         }
-        tombstone.draw(gl, 48.5f, 10f, 0f);
-        tombstone.draw(gl, 47.7f, 10.3f, 0f);
-        tombstone.draw(gl, 47.0f, 9.9f, 0f);
 
         if (combatSystem.combatActive)
         {
@@ -182,7 +178,7 @@ public class GameSystem
         gl.glEnable(GL10.GL_TEXTURE_2D);
  
         if (showText)
-            alpha.draw(gl, "Testing this\nand That!!!");
+            alpha.draw(gl, -4f, 2f, "Testing this\nand That!!!");
     }
 
     public void playerAction2()
@@ -192,5 +188,22 @@ public class GameSystem
         else
             showText = true;
         
+    }
+    
+    public void startSpeedo()
+    {
+        mSpeedo.setStartTime();
+    }
+    
+    public void stopSpeedo()
+    {
+        mSpeedo.setEndTime();
+    }
+    
+    public void drawSpeedo(GL10 gl)
+    {
+//        mSpeedo.draw(gl);
+        float rate = mSpeedo.getRate();
+        alpha.draw(gl, 3.5f, 2.5f, Float.toString(rate));
     }
 }
