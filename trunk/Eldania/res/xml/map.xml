@@ -60,24 +60,25 @@
     <tile x="49" y="14" look="2" passable="1" interact="0"/>
 
     // cave entrance
-    <tile x="49" y="15" look="3" passable="1" interact="0"/>
-    <tile x="49" y="16" look="3" passable="1" interact="0"/>
-    <tile x="49" y="17" look="3" passable="1" interact="0"/>
-    <tile x="49" y="18" look="3" passable="1" interact="0"/>
+    <tile x="49" y="15" look="3" passable="1" interact="0" wallw="5" walle="5"/>
+    <tile x="49" y="16" look="3" passable="1" interact="0" wallw="5" walle="5"/>
+    <tile x="49" y="17" look="3" passable="1" interact="0" wallw="5" walle="5"/>
+    <tile x="49" y="18" look="3" passable="1" interact="0" wallw="5" walle="5"/>
+	// first room
     <tile x="49" y="19" look="3" passable="1" interact="0"/>
-    <tile x="48" y="19" look="3" passable="1" interact="0"/>
-    <tile x="50" y="19" look="3" passable="1" interact="0"/>
+    <tile x="48" y="19" look="3" passable="1" interact="0" wallw="5" walls="5"/>
+    <tile x="50" y="19" look="3" passable="1" interact="0" walle="5" walls="5"/>
     <tile x="49" y="20" look="3" passable="1" interact="0"/>
-    <tile x="48" y="20" look="3" passable="1" interact="0"/>
-    <tile x="50" y="20" look="3" passable="1" interact="0"/>
-    <tile x="49" y="21" look="3" passable="1" interact="0"/>
-    <tile x="48" y="21" look="3" passable="1" interact="0"/>
-    <tile x="50" y="21" look="3" passable="1" interact="0"/>
+    <tile x="48" y="20" look="3" passable="1" interact="0" wallw="5"/>
+    <tile x="50" y="20" look="3" passable="1" interact="0" walle="5"/>
+    <tile x="49" y="21" look="3" passable="1" interact="0" walln="5"/>
+    <tile x="48" y="21" look="3" passable="1" interact="0" wallw="5" walln="5"/>
+    <tile x="50" y="21" look="3" passable="1" interact="0" walln="5"/>
 
-    <tile x="51" y="21" look="3" passable="1" interact="0"/>
-    <tile x="52" y="21" look="3" passable="1" interact="0"/>
-    <tile x="53" y="21" look="3" passable="1" interact="0"/>
-    <tile x="54" y="21" look="3" passable="1" interact="0"/>
+    <tile x="51" y="21" look="3" passable="1" interact="0" walln="5" walls="5"/>
+    <tile x="52" y="21" look="3" passable="1" interact="0" walln="5" walls="5"/>
+    <tile x="53" y="21" look="3" passable="1" interact="0" walln="5" walls="5"/>
+    <tile x="54" y="21" look="3" passable="1" interact="0" walln="5" walls="5"/>
 
     <tile x="55" y="21" look="3" passable="1" interact="0"/>
     <tile x="55" y="22" look="3" passable="1" interact="0"/>

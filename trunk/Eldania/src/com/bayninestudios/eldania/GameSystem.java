@@ -202,8 +202,7 @@ public class GameSystem
     
     public void drawSpeedo(GL10 gl)
     {
-//        mSpeedo.draw(gl);
         float rate = mSpeedo.getRate();
-        alpha.draw(gl, 3.5f, 2.5f, Float.toString(rate));
+        alpha.draw(gl, 3.5f, -2.8f, Float.toString(rate));
     }
 }
