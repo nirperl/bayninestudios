@@ -12,7 +12,7 @@ public class Cave
     
     public Cave(Context context)
     {
-        model = new DrawModel(context, R.xml.wall);
+        model = new DrawModel(context, R.xml.hwall);
     }
 
     public void loadTextures(GL10 gl, Context context)

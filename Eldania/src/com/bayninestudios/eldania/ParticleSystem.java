@@ -11,7 +11,7 @@ public class ParticleSystem
 	private Particle[] mParticles;
 
 	// probably a good idea to add these two to the constructor
-	private int PARTICLECOUNT = 30;
+	private int PARTICLECOUNT = 20;
 	private int activeParticles = 0;
 
 	// gravity is 10, no real reason, but gotta start with something

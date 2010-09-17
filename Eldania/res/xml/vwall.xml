@@ -13,19 +13,19 @@
                   <texcoord u="0.0" v="1.0"/>
                </vertex>
                <vertex>
-                  <position x="1.0" y="0.0" z="0.0" />
+                  <position x="0.0" y="0.0" z="1.1" />
                   <normal x="0.0" y="-1.0" z="0.0" />
-                  <texcoord u="1.0" v="1.0"/>
+                  <texcoord u="0.0" v="0.0"/>
                </vertex>
                <vertex>
-                  <position x="1.0" y="0.0" z="1.1" />
+                  <position x="0.0" y="1.0" z="1.1" />
                   <normal x="0.0" y="-1.0" z="0.0" />
                   <texcoord u="1.0" v="0.0"/>
                </vertex>
                <vertex>
-                  <position x="0.0" y="0.0" z="1.1" />
+                  <position x="0.0" y="1.0" z="0.0" />
                   <normal x="0.0" y="-1.0" z="0.0" />
-                  <texcoord u="0.0" v="0.0"/>
+                  <texcoord u="1.0" v="1.0"/>
                </vertex>
             </vertexbuffer>
          </geometry>

@@ -1,5 +1,8 @@
 package com.bayninestudios.eldania;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
@@ -8,6 +11,8 @@ import android.util.Log;
 public class Landscape
 {
     private DrawModel tile;
+    private DrawModel hwall;
+    private DrawModel vwall;
     private TileMap map;
     public Cave cave;
     private DrawModel tombstone;
@@ -22,6 +27,8 @@ public class Landscape
     public Landscape(Context context)
     {
         tile = new DrawModel(context, R.xml.tile);
+        hwall = new DrawModel(context, R.xml.hwall);
+        vwall = new DrawModel(context, R.xml.vwall);
         cave = new Cave(context);
         tombstone = new DrawModel(context, R.xml.tombstone1);
         tombstone2 = new DrawModel(context, R.xml.tombstone2);
@@ -36,13 +43,32 @@ public class Landscape
     {
         tile.loadTexture(gl, context, R.drawable.supertexture);
         tile.superTexture();
+        hwall.loadTexture(gl, context, R.drawable.supertexture);
+        hwall.superTexture();
+        vwall.loadTexture(gl, context, R.drawable.supertexture);
+        vwall.superTexture();
         cave.loadTextures(gl, context);
         fog.loadTexture(gl, context, R.drawable.fog2);
         fog2.loadTexture(gl, context, R.drawable.fog2);
         tombstone.loadTexture(gl, context, R.drawable.tombstone2);
         tombstone2.loadTexture(gl, context, R.drawable.tombstone);
+        
+        addGameObject(1, 48.5f, 10f, 0f);
+        addGameObject(1, 46.9f, 11f, 0f);
+        addGameObject(1, 47.8f, 11.1f, 0f);
+        addGameObject(1, 46.2f, 10.4f, 0f);
+        addGameObject(2, 47.0f, 9.9f, 0f);
+        addGameObject(2, 47.7f, 10.2f, 0f);
+        addGameObject(2, 46.0f, 11.4f, 0f);
+        addGameObject(1, 47.6f, 9.2f, 0f);
+        addGameObject(1, 48.5f, 12.0f, 0f);
     }
 
+    private void addGameObject(int type, float x, float y, float z)
+    {
+        GameObject tomb3 = new GameObject(type, new Vector3(x, y, z));
+        map.addGameObj(tomb3);
+    }
     
     public void nextBlend()
     {
@@ -72,21 +98,40 @@ public class Landscape
             {
                 int tileX = x + (int) charX;
                 int tileY = y + (int) charY;
+                TileDef tileD = map.getTileD(tileX, tileY);
                 int tileType = map.getTile(tileX, tileY);
-                if (tileType != 0)
+                if (tileD.look != 0)
                     tile.tileDraw(gl, tileX, tileY, 0, (tileType - 1) * 8);
+                if (tileD.wallw != 0)
+                {
+                    vwall.tileDraw(gl, tileX, tileY, 0f, (tileD.wallw - 1) * 8);
+                }
+                if (tileD.walle != 0)
+                {
+                    vwall.tileDraw(gl, tileX+1, tileY, 0f, (tileD.walle - 1) * 8);
+                }
+                if (tileD.walln != 0)
+                {
+                    hwall.tileDraw(gl, tileX, tileY+1, 0f, (tileD.walln - 1) * 8);
+                }
+                if (tileD.walls != 0)
+                {
+                    hwall.tileDraw(gl, tileX, tileY, 0f, (tileD.walls - 1) * 8);
+                }
+                if (tileD.gameObj != null)
+                {
+                    Iterator<GameObject> iter = tileD.gameObj.iterator();
+                    while (iter.hasNext())
+                    {
+                        GameObject current = iter.next();
+                        if (current.type == 1)
+                            tombstone.draw(gl, current.position.x, current.position.y, current.position.z);
+                        else
+                            tombstone2.draw(gl, current.position.x, current.position.y, current.position.z);
+                    }
+                }
             }
         }
-        cave.draw(gl);
-
-        tombstone.draw(gl, 48.5f, 10f, 0f);
-        tombstone.draw(gl, 46.9f, 11f, 0f);
-        tombstone.draw(gl, 47.8f, 11.1f, 0f);
-        tombstone.draw(gl, 46.2f, 10.4f, 0f);
-        tombstone2.draw(gl, 47.0f, 9.9f, 0f);
-        tombstone2.draw(gl, 47.7f, 10.2f, 0f);
-        tombstone2.draw(gl, 46.0f, 11.4f, 0f);
-        tombstone.draw(gl, 47.6f, 9.2f, 0f);
     }
     
     // TODO: just a proof of concept

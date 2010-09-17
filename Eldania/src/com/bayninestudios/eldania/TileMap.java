@@ -1,6 +1,7 @@
 package com.bayninestudios.eldania;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -51,9 +52,17 @@ public class TileMap
                         int look = xrp.getAttributeIntValue(null, "look", 0);
                         int passable = xrp.getAttributeIntValue(null, "passable", 0);
                         int interact = xrp.getAttributeIntValue(null, "interact", 0);
+                        int wallw = xrp.getAttributeIntValue(null, "wallw", 0);
+                        int walln = xrp.getAttributeIntValue(null, "walln", 0);
+                        int walle = xrp.getAttributeIntValue(null, "walle", 0);
+                        int walls = xrp.getAttributeIntValue(null, "walls", 0);
                         tiles[x][y].look = look;
                         tiles[x][y].passable = passable;
                         tiles[x][y].interact = interact;
+                        tiles[x][y].wallw = wallw;
+                        tiles[x][y].walln = walln;
+                        tiles[x][y].walle = walle;
+                        tiles[x][y].walls = walls;
                     }
                 }
                 else if (xrp.getEventType() == XmlResourceParser.END_TAG)
@@ -85,6 +94,11 @@ public class TileMap
         return tiles[x][y].look;
     }
 
+    public TileDef getTileD(int x, int y)
+    {
+        return tiles[x][y];
+    }
+
     public boolean checkPassible(int x, int y)
     {
         if (tiles[x][y].passable == 0)
@@ -95,5 +109,16 @@ public class TileMap
         {
             return true;
         }
+    }
+
+    public void addGameObj(GameObject obj)
+    {
+        int x = (int) obj.position.x;
+        int y = (int) obj.position.y;
+        if (getTileD(x, y).gameObj == null)
+        {
+            getTileD(x, y).gameObj = new ArrayList<GameObject>();
+        }
+        getTileD(x, y).gameObj.add(obj);
     }
 }
