@@ -5,13 +5,14 @@ import java.nio.ShortBuffer;
 import java.util.Random;
 
 import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 public class ParticleSystem
 {
 	private Particle[] mParticles;
 
 	// probably a good idea to add these two to the constructor
-	private int PARTICLECOUNT = 20;
+	private int PARTICLECOUNT = 30;
 	private int activeParticles = 0;
 
 	// gravity is 10, no real reason, but gotta start with something
@@ -30,12 +31,17 @@ public class ParticleSystem
 	private FloatBuffer mVertexBuffer;
 	private ShortBuffer mIndexBuffer;
     private FloatBuffer mTexBuffer;
-	
+
+    private int vertexBufferIndex;
+    private int indexBufferIndex;
+    
+    public boolean useVBO = true;
+    
 	private Random gen;
 
 	public ParticleSystem()
 	{
-		mParticles = new Particle[PARTICLECOUNT];
+	    mParticles = new Particle[PARTICLECOUNT];
 
 		// setup the random number generator
 		gen = new Random(System.currentTimeMillis());
@@ -60,19 +66,69 @@ public class ParticleSystem
 	    lastTime = System.currentTimeMillis();
 	}
 
-    public void draw(GL10 gl)
+	public void init(GL10 gl)
+	{
+	    GL11 gl11 = (GL11)gl;
+        int[] buffer = new int[1];
+        gl11.glGenBuffers(1, buffer, 0);
+        vertexBufferIndex = buffer[0];
+        gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, vertexBufferIndex);
+        gl11.glBufferData(GL11.GL_ARRAY_BUFFER, 9 * 4, mVertexBuffer, GL11.GL_STATIC_DRAW);
+       
+//        gl11.glGenBuffers(1, buffer, 0);
+//        int textureBufferIndex = buffer[0];
+//        gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, textureBufferIndex);
+//        gl11.glBufferData(GL11.GL_ARRAY_BUFFER, 8 * 4, mTexBuffer, GL11.GL_STATIC_DRAW);
+       
+        gl11.glGenBuffers(1, buffer, 0);
+        indexBufferIndex = buffer[0];
+        gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, indexBufferIndex);
+        gl11.glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, 3 * 2, mIndexBuffer, GL11.GL_STATIC_DRAW);
+       
+        gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+        gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+    }
+
+	public void draw(GL10 gl)
     {
-        gl.glDisable(GL10.GL_TEXTURE_2D);
-    	gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
-		for (int i = 0; i < PARTICLECOUNT; i++)
-		{
-			gl.glPushMatrix();
-			gl.glColor4f(mParticles[i].red, mParticles[i].green, mParticles[i].blue, 1.0f);
-			gl.glTranslatef(mParticles[i].x, mParticles[i].y, mParticles[i].z);
-		    gl.glDrawElements(GL10.GL_TRIANGLES, 3, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
-		    gl.glPopMatrix();
-    	}
-        gl.glEnable(GL10.GL_TEXTURE_2D);
+	    if (useVBO)
+	    {
+            gl.glDisable(GL10.GL_TEXTURE_2D);
+    
+        	GL11 gl11 = (GL11)gl;
+            gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, vertexBufferIndex);
+            gl11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
+            gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, indexBufferIndex);
+    
+            for (int i = 0; i < PARTICLECOUNT; i++)
+    		{
+    			gl.glPushMatrix();
+    			gl.glColor4f(mParticles[i].red, mParticles[i].green, mParticles[i].blue, 1.0f);
+    			gl.glTranslatef(mParticles[i].x, mParticles[i].y, mParticles[i].z);
+    	        gl11.glDrawElements(GL11.GL_TRIANGLES, 3, GL11.GL_UNSIGNED_SHORT, 0);
+    		    gl.glPopMatrix();
+        	}
+            gl11.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+            gl11.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+    
+            gl.glEnable(GL10.GL_TEXTURE_2D);
+	    }
+	    else
+	    {
+            gl.glDisable(GL10.GL_TEXTURE_2D);
+            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
+    
+            for (int i = 0; i < PARTICLECOUNT; i++)
+            {
+                gl.glPushMatrix();
+                gl.glColor4f(mParticles[i].red, mParticles[i].green, mParticles[i].blue, 1.0f);
+                gl.glTranslatef(mParticles[i].x, mParticles[i].y, mParticles[i].z);
+                gl.glDrawElements(GL10.GL_TRIANGLES, 3, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
+                gl.glPopMatrix();
+            }
+    
+            gl.glEnable(GL10.GL_TEXTURE_2D);
+	    }
 	}
 
     private void initParticle(int i)

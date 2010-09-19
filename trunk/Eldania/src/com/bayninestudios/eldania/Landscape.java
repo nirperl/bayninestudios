@@ -19,7 +19,7 @@ public class Landscape
     private DrawModel tombstone2;
     public boolean useTextures;
     private int blendFactor = GL10.GL_ONE_MINUS_SRC_ALPHA;
-    private ParticleSystem part;
+    public ParticleSystem part;
 
     private DrawModel fog;
     private DrawModel fog2;
@@ -41,6 +41,7 @@ public class Landscape
 
     public void loadTextures(GL10 gl, Context context)
     {
+        part.init(gl);
         tile.loadTexture(gl, context, R.drawable.supertexture);
         tile.superTexture();
         hwall.loadTexture(gl, context, R.drawable.supertexture);
