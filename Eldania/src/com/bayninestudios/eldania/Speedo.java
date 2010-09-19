@@ -53,13 +53,13 @@ public class Speedo
         currentFrame++;
         if (currentFrame == FRAMECOUNT)
         {
-            Log.d("Framerate", Float.toString(mFrameRate));
             currentFrame = 0;
             for (int i = 0; i < FRAMECOUNT; i++)
             {
                 totalRate = totalRate + lastTenFrames[i];
             }
             mFrameRate = 1000f / (totalRate / FRAMECOUNT);
+            Log.d("Framerate", Float.toString(mFrameRate));
         }
     }
 

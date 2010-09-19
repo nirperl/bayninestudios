@@ -27,6 +27,10 @@ public class DrawModel
     private int[] mTexture = new int[1];
     float[] texCoords;
 
+    private int vertexBufferIndex;
+    private int textureBufferIndex;
+    private int indexBufferIndex;
+
     public DrawModel(Context context, int xmlFile)
     {
         this(context, xmlFile, 0f, 0f, 0f);
