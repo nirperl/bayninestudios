@@ -41,7 +41,7 @@ public class Landscape
 
     public void loadTextures(GL10 gl, Context context)
     {
-        part.init(gl);
+        part.init(context, gl);
         tile.loadTexture(gl, context, R.drawable.supertexture);
         tile.superTexture();
         hwall.loadTexture(gl, context, R.drawable.supertexture);

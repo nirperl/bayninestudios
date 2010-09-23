@@ -4,9 +4,18 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.Random;
 
 public class Util
 {
+    static Random gen = new Random(System.currentTimeMillis());;
+    static public float randomFloat()
+    {
+//        if (gen == null)
+//            gen = new Random(System.currentTimeMillis());
+        return gen.nextFloat();
+    }
+
     // used to make native order float buffers
     static public FloatBuffer makeFloatBuffer(float[] arr)
     {

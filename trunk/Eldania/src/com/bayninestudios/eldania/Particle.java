@@ -14,6 +14,8 @@ public class Particle
 	// time to live
 	public float timeToLive;
 
+	public float scale;
+	
 	public Particle()
 	{
 	}
