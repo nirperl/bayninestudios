@@ -217,14 +217,6 @@ public class Player
                 position.y = newCharY;
             }
 
-            if (((int)position.x == 49) && ((int)position.y == 15))
-            {
-                landscape.cave.inside = true;
-            }
-            if (((int)position.x == 49) && ((int)position.y == 14))
-            {
-                landscape.cave.inside = false;
-            }
             walkFrameTimer = walkFrameTimer + timeDif;
             if (walkFrameTimer > WALKFRAMESPEED)
             {

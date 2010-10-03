@@ -14,7 +14,6 @@ public class Landscape
     private DrawModel hwall;
     private DrawModel vwall;
     private TileMap map;
-    public Cave cave;
     private DrawModel tombstone;
     private DrawModel tombstone2;
     public boolean useTextures;
@@ -29,7 +28,6 @@ public class Landscape
         tile = new DrawModel(context, R.xml.tile);
         hwall = new DrawModel(context, R.xml.hwall);
         vwall = new DrawModel(context, R.xml.vwall);
-        cave = new Cave(context);
         tombstone = new DrawModel(context, R.xml.tombstone1);
         tombstone2 = new DrawModel(context, R.xml.tombstone2);
         map = new TileMap(context, R.xml.map);
@@ -48,7 +46,6 @@ public class Landscape
         hwall.superTexture();
         vwall.loadTexture(gl, context, R.drawable.supertexture);
         vwall.superTexture();
-        cave.loadTextures(gl, context);
         fog.loadTexture(gl, context, R.drawable.fog2);
         fog2.loadTexture(gl, context, R.drawable.fog2);
         tombstone.loadTexture(gl, context, R.drawable.tombstone2);

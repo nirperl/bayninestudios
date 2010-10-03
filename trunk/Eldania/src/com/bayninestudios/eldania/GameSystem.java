@@ -18,9 +18,8 @@ public class GameSystem
     private DrawModel targetTile;
     private Alphabet alpha;
     private Speedo mSpeedo;
-    private Particle[] ripple;
+    private RippleEffect ripples1;
     private boolean showText = false;
-    private long rippleUpdate;
 
     public GameSystem(Context context)
     {
@@ -32,14 +31,7 @@ public class GameSystem
         enemies = new ArrayList<Enemy>();
         alpha = new Alphabet(context);
         mSpeedo = new Speedo();
-        ripple = new Particle[10];
-        for (int loop = 0; loop < 10; loop++)
-        {
-            ripple[loop] = new Particle(Util.randomFloat()*.2f+50.35f,
-                    Util.randomFloat()*.2f+13.4f, 0.01f);
-            ripple[loop].scale = Util.randomFloat()*.08f+.02f;
-            rippleUpdate = System.currentTimeMillis();
-        }
+        ripples1 = new RippleEffect(context);
         addEnemies();
     }
 
@@ -80,6 +72,7 @@ public class GameSystem
         mPlayer.loadTextures(gl, context);
         targetTile.loadTexture(gl, context, R.drawable.target);
         alpha.loadTexture(gl, context, R.drawable.simplealpha);
+        ripples1.init(gl, context);
         Iterator<Enemy> iter = enemies.iterator();
         while (iter.hasNext())
         {
@@ -130,23 +123,7 @@ public class GameSystem
         checkCombat();
         combatSystem.update();
         mLandscape.updatePart();
-
-        long newTime = System.currentTimeMillis();
-        newTime = newTime - rippleUpdate;
-        float frameRate = newTime / 1000f;
-        float scaleFactor = 0.001f * frameRate;
-        Log.d("DDDDDD ",":"+newTime);
-        for (int loop = 0; loop < 10; loop++)
-        {
-            ripple[loop].scale = ripple[loop].scale + 0.005f;
-            if (ripple[loop].scale > 0.08f)
-            {
-                ripple[loop].x = Util.randomFloat()*.2f+50.35f;
-                ripple[loop].y = Util.randomFloat()*.2f+13.4f;
-                ripple[loop].scale = 0.01f;
-            }
-        }
-        rippleUpdate = newTime;
+        ripples1.update();
     }
 
     public void draw(GL10 gl)
@@ -167,14 +144,7 @@ public class GameSystem
         {
             drawTargetTile(gl, combatSystem.getTarget());
         }
-        // Ripples!!!!
-        gl.glEnable(GL10.GL_BLEND);
-        for (int loop = 0; loop < 10; loop++)
-        {
-            targetTile.draw(gl, ripple[loop].x, ripple[loop].y, ripple[loop].z, 0f, ripple[loop].scale);
-        }
-        gl.glDisable(GL10.GL_BLEND);
-        Log.d("debug", "wtf");
+        ripples1.draw(gl);
         mLandscape.drawPart(49.5f, 13.5f, gl);
         mLandscape.drawPart(51.5f, 13.5f, gl);
 
