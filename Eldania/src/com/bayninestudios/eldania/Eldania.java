@@ -164,7 +164,7 @@ class ClearRenderer implements GLSurfaceView.Renderer
     private GameSystem gameSystem;
 
     private float mCameraX = 0f;
-    private float zoom = 1.1f;
+    private float zoom = .7f;
     private float mCameraY = -8f * zoom;
     private float mCameraZ = 12f * zoom;
 
