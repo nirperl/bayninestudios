@@ -14,6 +14,7 @@ public class RippleEffect
     private int RIPPLES = 20;
     private float ripple_x = 50.4f;
     private float ripple_y = 13.4f;
+    private float maxScale = 0.12f;
     private DrawModel targetTile;
 
     public RippleEffect(Context context)
@@ -24,7 +25,7 @@ public class RippleEffect
         {
             ripple[loop] = new Particle(Util.randomFloat()*.2f + ripple_x,
                     Util.randomFloat()*.2f + ripple_y, 0.01f);
-            ripple[loop].scale = Util.randomFloat()*.08f+.02f;
+            ripple[loop].scale = Util.randomFloat()*maxScale;
             rippleUpdate = System.currentTimeMillis();
         }
     }
@@ -44,7 +45,7 @@ public class RippleEffect
         for (int loop = 0; loop < RIPPLES; loop++)
         {
             ripple[loop].scale = ripple[loop].scale + 0.005f;
-            if (ripple[loop].scale > 0.1f)
+            if (ripple[loop].scale > maxScale)
             {
                 ripple[loop].x = Util.randomFloat()*.2f+ripple_x;
                 ripple[loop].y = Util.randomFloat()*.2f+ripple_y;
