@@ -19,7 +19,10 @@ public class GameSystem
     private Alphabet alpha;
     private Speedo mSpeedo;
     private RippleEffect ripples1;
-    private boolean showText = false;
+    private boolean showText = true;
+
+    private DrawModel necro;
+    private Vector3 necroPos;
 
     public GameSystem(Context context)
     {
@@ -28,6 +31,10 @@ public class GameSystem
         combatSystem = new CombatSystem(mPlayer);
         mLandscape = new Landscape(context);
         targetTile = new DrawModel(context, R.xml.tile);
+
+        necro = new DrawModel(context, R.xml.player);
+        necroPos = new Vector3(52f, 14.3f, 0f);
+
         enemies = new ArrayList<Enemy>();
         alpha = new Alphabet(context);
         mSpeedo = new Speedo();
@@ -51,19 +58,6 @@ public class GameSystem
         addEnemy(49.5f, 20.5f, 0.10f, 500, R.drawable.skeleton);
         addEnemy(57.5f, 22.5f, 0.10f, 500, R.drawable.skeleton);
         addEnemy(46.5f, 9.5f, .15f, 400, R.drawable.skeleton);
-        //
-        // addEnemy(50.5f, 11.5f, .2f, 300, R.drawable.orc);
-        // addEnemy(51.5f, 10f, .2f, 350, R.drawable.orc);
-//         addEnemy(48.5f, 10f, .1f, 500, R.drawable.skeleton);
-        // addEnemy(46.5f, 9.5f, .2f, 350, R.drawable.skeleton);
-    }
-
-    public void playerAction()
-    {
-        if (combatSystem.combatActive)
-        {
-            combatSystem.attack();
-        }
     }
 
     public void init(GL10 gl)
@@ -72,6 +66,7 @@ public class GameSystem
         mPlayer.loadTextures(gl, context);
         targetTile.loadTexture(gl, context, R.drawable.target);
         alpha.loadTexture(gl, context, R.drawable.simplealpha);
+        necro.loadTexture(gl, context, R.drawable.necromancer);
         ripples1.init(gl, context);
         Iterator<Enemy> iter = enemies.iterator();
         while (iter.hasNext())
@@ -79,19 +74,6 @@ public class GameSystem
             Enemy current = iter.next();
             current.loadTextures(gl, context);
         }
-    }
-
-    public boolean isInBox(Vector3 pos1, Vector3 pos2, float rad)
-    {
-        boolean returnVal = false;
-        if ((pos1.x > (pos2.x - rad) && (pos1.x < (pos2.x + rad))))
-        {
-            if ((pos1.y > (pos2.y - rad) && (pos1.y < (pos2.y + rad))))
-            {
-                returnVal = true;
-            }
-        }
-        return (returnVal);
     }
 
     public void checkCombat()
@@ -102,7 +84,7 @@ public class GameSystem
             Enemy current = iter.next();
             float aggro = 0.7f;
             Vector3 playVec = mPlayer.position;
-            if (isInBox(playVec, current.position, aggro))
+            if (Util.isInBox(playVec, current.position, aggro))
             {
                 combatSystem.addEnemy(current);
             }
@@ -140,6 +122,8 @@ public class GameSystem
             current.draw(gl);
         }
 
+        necro.draw(gl, necroPos.x, necroPos.y, necroPos.z);
+
         if (combatSystem.combatActive)
         {
             drawTargetTile(gl, combatSystem.getTarget());
@@ -148,11 +132,8 @@ public class GameSystem
         mLandscape.drawPart(49.5f, 13.5f, gl);
         mLandscape.drawPart(51.5f, 13.5f, gl);
 
-
         gl.glPopMatrix();
         mPlayer.draw(gl);
-
-        
 
         // TODO fix up, just a proof of concept, but not bad for a proof
         gl.glPushMatrix();
@@ -185,15 +166,48 @@ public class GameSystem
         gl.glEnable(GL10.GL_TEXTURE_2D);
  
         if (showText)
-            alpha.draw(gl, -4f, 2f, "Testing this\nand That!!!");
+            alpha.draw(gl, -4f, 2f, "Hi!\nCan you please kill five\nskeletons?\nThanks");
+    }
+
+    public void playerAction()
+    {
+        if (combatSystem.combatActive)
+        {
+            combatSystem.attack();
+        }
+        else
+        {
+            checkActionable(mPlayer.position, mPlayer.facing);
+        }
+    }
+
+    private void checkActionable(Vector3 position, int facing)
+    {
+        Vector3 checkPoint = position.clone();
+        switch (facing)
+        {
+            case 40: checkPoint.x += .5f; break;
+            case 56: checkPoint.x -= .5f; break;
+            case 32: checkPoint.y += .5f; break;
+            case 48: checkPoint.y -= .5f; break;
+            default: break;
+        }
+        if (Util.isInBox(position, necroPos, .7f, .4f))
+        {
+            if (showText)
+                showText = false;
+            else
+                showText = true;
+        }
+        
     }
 
     public void playerAction2()
     {
-        if (showText)
-            showText = false;
-        else
-            showText = true;
+//        if (showText)
+//            showText = false;
+//        else
+//            showText = true;
         
     }
     

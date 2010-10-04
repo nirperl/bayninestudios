@@ -1,9 +1,5 @@
 package com.bayninestudios.eldania;
 
-import javax.microedition.khronos.opengles.GL10;
-
-import android.util.Log;
-
 public class CombatSystem
 {
     public Player player;
