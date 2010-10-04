@@ -19,7 +19,7 @@ public class GameSystem
     private Alphabet alpha;
     private Speedo mSpeedo;
     private RippleEffect ripples1;
-    private boolean showText = true;
+    private boolean showText = false;
 
     private DrawModel necro;
     private Vector3 necroPos;
@@ -76,6 +76,9 @@ public class GameSystem
         }
     }
 
+    // there's a problem with this code, checkcombat will keep adding
+    // the same monsters every update.  need to only add once. use an
+    // in combat flag
     public void checkCombat()
     {
         Iterator<Enemy> iter = enemies.iterator();
@@ -183,32 +186,33 @@ public class GameSystem
 
     private void checkActionable(Vector3 position, int facing)
     {
+        float reach = 0.5f;
         Vector3 checkPoint = position.clone();
         switch (facing)
         {
-            case 40: checkPoint.x += .5f; break;
-            case 56: checkPoint.x -= .5f; break;
-            case 32: checkPoint.y += .5f; break;
-            case 48: checkPoint.y -= .5f; break;
+            case 40: checkPoint.x += reach; break;
+            case 56: checkPoint.x -= reach; break;
+            case 32: checkPoint.y += reach; break;
+            case 48: checkPoint.y -= reach; break;
             default: break;
         }
         if (Util.isInBox(position, necroPos, .7f, .4f))
         {
             if (showText)
+            {
+                mPlayer.talking = false;
                 showText = false;
+            }
             else
+            {
                 showText = true;
+                mPlayer.talking = true;
+            }
         }
-        
     }
 
     public void playerAction2()
     {
-//        if (showText)
-//            showText = false;
-//        else
-//            showText = true;
-        
     }
     
     public void startSpeedo()

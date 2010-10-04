@@ -19,8 +19,6 @@ public class CombatSystem
         enemy.inCombat = true;
         player.inCombat = true;
         combatActive = true;
-        player.dx = 0f;
-        player.dy = 0f;
         Vector3 playerPos = player.position;
         Vector3 enemyFacing = new Vector3(playerPos.x, playerPos.y, playerPos.z);
         enemyFacing.subtract(enemy.position);

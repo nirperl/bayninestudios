@@ -13,6 +13,7 @@ public class Player
     public Vector3 position;
     public float dx, dy;
     public boolean inCombat = false;
+    public boolean talking = false;
     private float MOVESPEED = 1.3f; // in tiles per second
     public int maxHealth = 30;
     public int curHealth = 20;
@@ -150,34 +151,35 @@ public class Player
 
     public void moveCharacter(int keyCode, boolean keyUp)
     {
-        if (!inCombat)
+        float newMove = 1f;
+        if (keyUp)
+            newMove = newMove * -1f;
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
         {
-            float newMove = 1f;
-            if (keyUp)
-                newMove = newMove * -1f;
-            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
-            {
-                dx = dx - newMove;
-            }
-            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
-            {
-                dx = dx + newMove;
-            }
-            if (keyCode == KeyEvent.KEYCODE_DPAD_UP)
-            {
-                dy = dy + newMove;
-            }
-            if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
-            {
-                dy = dy - newMove;
-            }
+            dx = dx - newMove;
+        }
+        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
+        {
+            dx = dx + newMove;
+        }
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP)
+        {
+            dy = dy + newMove;
+        }
+        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+        {
+            dy = dy - newMove;
+        }
+        if (!immobile())
             setFacing();
-        }
+    }
+
+    public boolean immobile()
+    {
+        if ((inCombat) || (talking))
+            return true;
         else
-        {
-            dx = 0;
-            dy = 0;
-        }
+            return false;
     }
 
     public void update(Landscape landscape)
@@ -185,45 +187,48 @@ public class Player
         long curTime = System.currentTimeMillis();
         long timeDif = curTime - lastUpdate;
         float frameRate = timeDif / 1000f;
-        // stopped walking
-        if ((dx == 0) && (dy == 0))
+        if (!immobile())
         {
-            walkFrame = 1;
-            walkFrameTimer = 0;
-            moving = false;
-        }
-        else
-        {
-            // on the first step don't wait until the walkFrameTimer
-            // to do the first walk frame
-            if (moving == false)
+            // stopped walking
+            if ((dx == 0) && (dy == 0))
             {
-                moving = true;
-                walkFrame = 0;
+                walkFrame = 1;
+                walkFrameTimer = 0;
+                moving = false;
             }
-
-            float moveSpeed = MOVESPEED * frameRate;
-            // move character
-            float newCharX = position.x + (dx * moveSpeed);
-            float newCharY = position.y + (dy * moveSpeed);
-            float characterWidth = 0.25f;
-            
-            if (landscape.checkPassable(newCharX + (dx*characterWidth), position.y))
+            else
             {
-                position.x = newCharX;
-            }
-            if (landscape.checkPassable(position.x, newCharY + (dy*characterWidth)))
-            {
-                position.y = newCharY;
-            }
-
-            walkFrameTimer = walkFrameTimer + timeDif;
-            if (walkFrameTimer > WALKFRAMESPEED)
-            {
-                walkFrameTimer = walkFrameTimer - WALKFRAMESPEED;
-                walkFrame++;
-                if (walkFrame > 3)
+                // on the first step don't wait until the walkFrameTimer
+                // to do the first walk frame
+                if (moving == false)
+                {
+                    moving = true;
                     walkFrame = 0;
+                }
+    
+                float moveSpeed = MOVESPEED * frameRate;
+                // move character
+                float newCharX = position.x + (dx * moveSpeed);
+                float newCharY = position.y + (dy * moveSpeed);
+                float characterWidth = 0.25f;
+                
+                if (landscape.checkPassable(newCharX + (dx*characterWidth), position.y))
+                {
+                    position.x = newCharX;
+                }
+                if (landscape.checkPassable(position.x, newCharY + (dy*characterWidth)))
+                {
+                    position.y = newCharY;
+                }
+    
+                walkFrameTimer = walkFrameTimer + timeDif;
+                if (walkFrameTimer > WALKFRAMESPEED)
+                {
+                    walkFrameTimer = walkFrameTimer - WALKFRAMESPEED;
+                    walkFrame++;
+                    if (walkFrame > 3)
+                        walkFrame = 0;
+                }
             }
         }
 
