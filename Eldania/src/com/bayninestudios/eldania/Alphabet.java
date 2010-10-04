@@ -57,15 +57,15 @@ public class Alphabet
 
     public void draw(GL10 gl, float x, float y, String chr)
     {
-        float textScale = 0.35f;
-        float spacing = 0.3f;
+        float textScale = 0.30f;
+        float spacing = 0.25f;
 
         for (int loop = 0; loop < chr.length(); loop++)
         {
             int chtr = chr.charAt(loop);
             if (chtr == 10)
             {
-                y -= .35f;
+                y -= .30f;
                 x = -4f;
             }
             else

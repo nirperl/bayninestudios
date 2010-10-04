@@ -61,4 +61,9 @@ public class Vector3
     {
         return (new String(x + "," + y + "," + "," + z));
     }
+    
+    public Vector3 clone()
+    {
+        return(new Vector3(x,y,z));
+    }
 }

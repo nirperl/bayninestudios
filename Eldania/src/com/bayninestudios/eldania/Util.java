@@ -38,4 +38,28 @@ public class Util
         return ib;
     }
 
+    /**
+     * Checks to see if a point is inside a box
+     * @param pos1 - the center of the box to check
+     * @param pos2 - the point to check to see if it is inside the box
+     * @param rad - the radius of the box to check
+     * @return
+     */
+    static public boolean isInBox(Vector3 pos1, Vector3 pos2, float radx, float rady)
+    {
+        boolean returnVal = false;
+        if ((pos1.x > (pos2.x - radx) && (pos1.x < (pos2.x + radx))))
+        {
+            if ((pos1.y > (pos2.y - rady) && (pos1.y < (pos2.y + rady))))
+            {
+                returnVal = true;
+            }
+        }
+        return (returnVal);
+    }
+
+    static public boolean isInBox(Vector3 pos1, Vector3 pos2, float rad)
+    {
+        return isInBox(pos1, pos2, rad, rad);
+    }
 }
